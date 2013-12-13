@@ -1,4 +1,4 @@
 SOS
 ===
 
-automated transcriptome assembly
+automated transcriptome assembly for RNA-seq data
