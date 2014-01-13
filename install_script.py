@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 class install_script():
-	def obtaining_tar(self, prog):
+	def obtaining_tar(self, prog, path):
 		if (prog == 4):
 			chk = self.checkfolder("oases")
 			
@@ -45,6 +45,7 @@ class install_script():
 			if(chk4 == False):
 				os.system("wget http://sb.cs.cmu.edu/seecer/downloads/SEECER-0.1.3.tar.gz")
 				os.system("tar -zxvf SEECER-0.1.3.tar.gz")
+				self.install_seecer(path)
 			else:
 				print ("The path already contains a folder named SEECER-0.1.3.tar.gz. please rename it or remove it from the path")
 
@@ -68,6 +69,17 @@ class install_script():
 		print "------Velvet installation------"
 		os.system("make "+cs)
 		
+	def install_seecer(self, path):
+		path3 = path + "/SEECER-0.1.3"
+		temp_pa = path3 + "/jellyfish-1.1.11/"
+		os.chdir(temp_pa)
+		os.system("./configure")
+		os.system("make")
+		temp_pa1 = path3 + "/SEECER/"
+		os.chdir(temp_pa1)
+		os.system("./configure")
+		os.system("make")
+
 	def getoptions(self):
 		parser = OptionParser()
 		parser.add_option("-f", "--folder", dest="foldername", help="destination folder")
@@ -131,9 +143,9 @@ if "4" in y:
 	if(vc == "n"):
 		vd = raw_input("Enter the location of velvet : ")
 		cs = cs + " \'VELVET_DIR=" + vd +"\'"
-	x.obtaining_tar(4)
+	x.obtaining_tar(4, pwd)
 	if (flg == 1):
-		x.obtaining_tar(5)
+		x.obtaining_tar(5, pwd)
 		x.install_velvet(pwd, cs)	
 	x.install_oases(pwd, cs)	
 
@@ -159,10 +171,10 @@ else:
 					cs = cs + " \'VELVET_DIR=" +pwd+"\\"+ vd +"\'"
 				else:
 					cs = cs + " \'VELVET_DIR=" + vd +"\'"
-			x.obtaining_tar(2)
+			x.obtaining_tar(2,pwd)
 			if(flg == 1):			
-				x.obtaining_tar(5)
+				x.obtaining_tar(5,y1.pwd)
 				x.install_velvet(pwd, cs)
 			x.install_oases(pwd, cs)
 		else:
-			x.obtaining_tar(int(i))
+			x.obtaining_tar(int(i), pwd)
