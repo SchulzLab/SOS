@@ -2,10 +2,20 @@ import os
 from optparse import OptionParser
 import subprocess
 import sys
+import commands
 
 class install_script():
+	def __init__(self):
+		self.prog_installed = []
+
 	def obtaining_tar(self, prog, path):
 		if (prog == 4):
+			output1 = commands.getstatusoutput("uname")		
+			if(output1[1].upper() == "LINUX"):			
+				chk2 = self.checkfolder("Sailfish-0.6.2-Linux_x86-64.tar.gz")
+			else:
+				chk2 = self.checkfolder("Sailfish-0.6.2-Mac_x86-64.tar.gz")
+
 			chk = self.checkfolder("oases")
 			
 			if(chk == False):
@@ -21,25 +31,53 @@ class install_script():
 			else:
 				print ("The path already contains a folder named SEECER-0.1.3.tar.gz. please rename it or remove it from the path")
 			
-			chk2 = self.checkfolder("Sailfish-0.6.2-Linux_x86-64.tar.gz")			
 			if(chk2 == False):
-				os.system("wget https://github.com/kingsfordgroup/sailfish/releases/download/v0.6.2/Sailfish-0.6.2-Linux_x86-64.tar.gz")
-				os.system("tar -zxvf Sailfish-0.6.2-Linux_x86-64.tar.gz")
-			
+				if (output1[1].upper() == "LINUX"):
+					os.system("wget https://github.com/kingsfordgroup/sailfish/releases/download/v0.6.2/Sailfish-0.6.2-Linux_x86-64.tar.gz --no-check-certificate")
+					os.system("tar -zxvf Sailfish-0.6.2-Linux_x86-64.tar.gz")
+					self.prog_installed.append(path+"/Sailfish-0.6.2-Linux_x86-64")
+				elif(output1[1].upper() == "DARWIN"):
+					os.system("wget https://github.com/kingsfordgroup/sailfish/releases/download/v0.6.2/Sailfish-0.6.2-Mac_x86-64.tar.gz --no-check-certificate")
+					os.system("tar -zxvf Sailfish-0.6.2-Mac_x86-64.tar.gz")
+					self.prog_installed.append(path+"/Sailfish-0.6.2-Mac_x86-64")
+				else:
+					print "Unknown operating system"
+					sys.exit()
+								
 			else:
 				print ("The path already contains a folder named Sailfish-0.6.2-Linux_x86-64.tar.gz. please rename it or remove it from the path") 
 		
 		if(prog==3):
-			chk2 = self.checkfolder("Sailfish-0.6.2-Linux_x86-64.tar.gz")			
+			output = commands.getstatusoutput("uname")		
+			if(output[1].upper() == "LINUX"):			
+				chk2 = self.checkfolder("Sailfish-0.6.2-Linux_x86-64.tar.gz")
+			else:
+				chk2 = self.checkfolder("Sailfish-0.6.2-Mac_x86-64.tar.gz")
+							
 			if(chk2 == False):
-				os.system("wget https://github.com/kingsfordgroup/sailfish/releases/download/v0.6.2/Sailfish-0.6.2-Linux_x86-64.tar.gz")
-				os.system("tar -zxvf Sailfish-0.6.2-Linux_x86-64.tar.gz")
-
+				if (output[1].upper() == "LINUX"):
+					os.system("wget https://github.com/kingsfordgroup/sailfish/releases/download/v0.6.2/Sailfish-0.6.2-Linux_x86-64.tar.gz --no-check-certificate")
+					os.system("tar -zxvf Sailfish-0.6.2-Linux_x86-64.tar.gz")
+					self.prog_installed.append(path+"/Sailfish-0.6.2-Linux_x86-64")
+				elif(output[1].upper() == "DARWIN"):
+					os.system("wget https://github.com/kingsfordgroup/sailfish/releases/download/v0.6.2/Sailfish-0.6.2-Mac_x86-64.tar.gz --no-check-certificate")
+					os.system("tar -zxvf Sailfish-0.6.2-Mac_x86-64.tar.gz")
+					self.prog_installed.append(path+"/Sailfish-0.6.2-Mac_x86-64")
+				else:
+					print "Unknown operating system"
+					sys.exit()
+			else:
+				print ("The path already contains a folder named Sailfish-0.6.2-Linux_x86-64.tar.gz/Sailfish-0.6.2-Mac_x86-64.tar.gz. please rename it or remove it from the path") 
+				
+		
 		if(prog==2):
 			chk6 = self.checkfolder("oases")
 			if(chk6 == False):
 				os.system("git clone git://github.com/dzerbino/oases.git")
-
+			else:
+				print ("The path already contains a folder named oases. please rename the folder or remove it from the path")
+				sys.exit()
+			
 		if(prog==1):
 			chk4 = self.checkfolder("SEECER-0.1.3.tar.gz")
 			if(chk4 == False):
@@ -48,7 +86,9 @@ class install_script():
 				self.install_seecer(path)
 			else:
 				print ("The path already contains a folder named SEECER-0.1.3.tar.gz. please rename it or remove it from the path")
-
+				sys.exit()
+		
+		
 		if(prog==5):
 			chk5 = self.checkfolder("velvet")
 			if(chk5 == False):
@@ -61,6 +101,7 @@ class install_script():
 		path2 = path + "/oases"
 		os.chdir(path2)
 		os.system("make "+cs)
+		self.prog_installed.append(path2)
 #		os.system("")
 	
 	def install_velvet(self,path, cs):
@@ -68,6 +109,7 @@ class install_script():
 		os.chdir(path1) 
 		print "------Velvet installation------"
 		os.system("make "+cs)
+		self.prog_installed.append(path1)
 		
 	def install_seecer(self, path):
 		path3 = path + "/SEECER-0.1.3"
@@ -79,6 +121,7 @@ class install_script():
 		os.chdir(temp_pa1)
 		os.system("./configure")
 		os.system("make")
+		self.prog_installed.append(temp_pa1)
 
 	def getoptions(self):
 		parser = OptionParser()
@@ -89,6 +132,10 @@ class install_script():
 	def checkfolder(self, program):
 		var = os.path.exists(program)
 		return var
+	
+	def checkinstall(self):
+		print self.prog_installed
+	
 	
 
 ########### MAIN PROGRAM ###########3
@@ -178,3 +225,5 @@ else:
 			x.install_oases(pwd, cs)
 		else:
 			x.obtaining_tar(int(i), pwd)
+
+x.checkinstall()
