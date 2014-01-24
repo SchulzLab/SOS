@@ -134,8 +134,51 @@ class install_script():
 		return var
 	
 	def checkinstall(self):
-		print self.prog_installed
-	
+		for i in self.prog_installed:
+		
+			if "SEECER" in i:
+				x1 = os.listdir(i+"/bin/")
+				if(("seecer" in x1) and ("random_sub_N" in x1) and ("run_seecer.sh" in x1) and ("run_jellyfish.sh" in x1) and ("replace_ids" in x1)):
+					print "SEECER installed successfully"
+					self.export_prog(i)
+				else:
+					print "SEECER was not installed properly. Please try again"				
+			if "oases" in i:
+				x2 = os.listdir(i)
+				if ("oases" in x2):
+					print "oases installed successfully"
+					self.export_prog(i)
+				else:
+					print "oases was not installed properly. please try again"
+			
+			if "velvet" in i:
+				x3 = os.listdir(i)
+				if(("velvetg" in x3) and ("velveth" in x3)):
+					print "velvet installed successfully"
+					self.export_prog(i)
+				else:
+					print "velvet was not installed properly. Please try again"
+					
+			if ("Sailfish-0.6.2-Linux_x86-64" in i) or ("Sailfish-0.6.2-Mac_x86-64" in i):
+				x4 = os.listdir(i+"/bin/")
+				if("sailfish" in x4):
+					print "Sailfish installed successfully"
+					self.export_prog(i)
+				else:
+					print "Sailfish was not installed properly. Please try again"
+					
+	def export_prog(self, pro):
+		if "SEECER-0.1.3" in pro:
+			os.system("export PATH="+pro+"/bin/:$PATH")
+		if "oases" in pro:
+			os.system("export PATH="+pro+":$PATH")
+		if "velvet" in pro:
+			os.system("export PATH="+pro+":$PATH")
+		if "Sailfish-0.6.2-Linux_x86-64" in pro:
+			os.system("export PATH="+pro+"/bin:$PATH")
+			os.system("export LD_LIBRARY_PATH="+pro+"/lib:$LD_LIBRARY_PATH")
+		if "Sailfish-0.6.2-Mac_x86-64" in pro:
+			os.system("export DYLD_LIBRARY_PATH="+pro+"/lib:$DYLD_LIBRARY_PATH")
 	
 
 ########### MAIN PROGRAM ###########3
@@ -220,7 +263,7 @@ else:
 					cs = cs + " \'VELVET_DIR=" + vd +"\'"
 			x.obtaining_tar(2,pwd)
 			if(flg == 1):			
-				x.obtaining_tar(5,y1.pwd)
+				x.obtaining_tar(5,pwd)
 				x.install_velvet(pwd, cs)
 			x.install_oases(pwd, cs)
 		else:
