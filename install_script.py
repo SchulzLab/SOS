@@ -135,7 +135,6 @@ class install_script():
 	
 	def checkinstall(self):
 		for i in self.prog_installed:
-		
 			if "SEECER" in i:
 				x1 = os.listdir(i+"/bin/")
 				if(("seecer" in x1) and ("random_sub_N" in x1) and ("run_seecer.sh" in x1) and ("run_jellyfish.sh" in x1) and ("replace_ids" in x1)):
@@ -237,7 +236,8 @@ if "4" in y:
 	if (flg == 1):
 		x.obtaining_tar(5, pwd)
 		x.install_velvet(pwd, cs)	
-	x.install_oases(pwd, cs)	
+	x.install_oases(pwd, cs)
+	x.install_seecer(pwd)	
 
 else:
 	for i in y:
