@@ -10,7 +10,7 @@ class pipeline():
 		parser = OptionParser()
 		parser.add_option('-o', '--output',dest='foldername',help='Output directory 		prefix',metavar='NAME', action="store")
 		parser.add_option('-i', '--input',dest='inputname',help='Input file',metavar='INPUT', action="store")
-		parser.add_option('-t', '--threshold',dest='threshold',help='Threshold of sequencing cleaning',metavar='INPUT', action="store")
+		parser.add_option('-c', '--config',dest='config_file',help='Config file', action="store")
 		(options, args) = parser.parse_args()
 		return options
 		
@@ -83,17 +83,28 @@ except:
 
 n0 = commands.getstatusoutput("which run_seecer.sh")
 n = n0[1]
-n = n.replace("bin/run_seecer.sh", "")
+if "//" in n:
+	n = n.replace("bin//run_seecer.sh", "")
+else:
+	n = n.replace("bin/run_seecer.sh", "")
 
 f1 = os.popen('which oases')
 n1 = f1.read().rstrip()
-n1 = n1.replace("/oases//oases", "/oases/scripts/oases_pipeline.py")
+if "//" in n1:
+	n1 = n1.replace("/oases//oases", "/oases/scripts/oases_pipeline.py")
+else:
+	n1 = n1.replace("/oases/oases", "/oases/scripts/oases_pipeline.py")
 
 f2 = os.popen('which sailfish')
 n2 = f2.read().rstrip()
-n2 = n2.replace("sailfish", "")
+if "//" in n2:
+	n2 = n2.replace("/sailfish", "")
+else:
+	n2 = n2.replace("sailfish", "")
+	
+conf = cl1.config_file()
 
-input_file = open('config.txt')
+input_file = open(conf)
 lines = input_file.readlines()
 pathname1 = os.path.abspath(sys.argv[0]).replace("pipeline.py", "")
 
