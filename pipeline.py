@@ -102,7 +102,7 @@ if "//" in n2:
 else:
 	n2 = n2.replace("sailfish", "")
 	
-conf = cl1.config_file()
+conf = cl1.config_file
 
 input_file = open(conf)
 lines = input_file.readlines()
@@ -153,7 +153,7 @@ os.chdir(n)
 ############## Initializations #####################
 
 i=0
-s_para = "run_seecer.sh"
+s_para = "bin/run_seecer.sh"
 o_para = "python " +n1
 v_para = ""
 oa_para = ""
