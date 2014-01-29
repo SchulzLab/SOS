@@ -8,8 +8,8 @@ import commands
 class pipeline():
 	def getoptions(self):
 		parser = OptionParser()
-		parser.add_option('-o', '--output',dest='foldername',help='Output directory 		prefix',metavar='NAME', action="store")
-		parser.add_option('-i', '--input',dest='inputname',help='Input file',metavar='INPUT', action="store")
+		parser.add_option('-o', '--output',dest='foldername',help='Output director', action="store")
+		parser.add_option('-i', '--input',dest='inputname',help='Input file', action="store")
 		parser.add_option('-c', '--config',dest='config_file',help='Config file', action="store")
 		(options, args) = parser.parse_args()
 		return options
@@ -120,7 +120,10 @@ input_file.close()
 step_number = 0
 cond = "true"
 
+
 ######## Obtain the step number ##########
+
+
 while (cond == "true"):
 	print "Steps in the pipeline"
 	print "1.	SEECER"
@@ -148,8 +151,6 @@ if (thi.upper() == "YES" or thi.upper() == "Y"):
 		input_files[cl] = input_files[cl].replace(".","_")
 		input_files[cl] = input_files[cl]+"_cleared.fa"
 
-os.chdir(n)
-
 ############## Initializations #####################
 
 i=0
@@ -173,9 +174,8 @@ quant_folder = "sailfish_output/pipeline_quant"
 quant_count = 0
 
 for i10 in range(0,len(input_files)):
-	temp_a = input_files[i10].split("/")
-	if(len(temp_a)<=1):
-		input_files[i10] = pathname1 + input_files[i10]
+	temf = commands.getstatusoutput("readlink -f "+input_files[i10])
+	input_files[i10] = temf[1]
 	if (step_number == 1):
 		arguments = arguments + input_files[i10] + "_corrected.fa" + " "
 		argu1 = argu1 + input_files[i10] + " "
@@ -254,6 +254,7 @@ while i < len(lines):
 			i=i+1
 	i=i+1
 
+os.chdir(n)
 
 ### SEECER execution ###
 for k in input_files:
