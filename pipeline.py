@@ -217,6 +217,7 @@ while i < len(lines):
 				v_para = v_para+" -"+lines[i].rstrip()+" "
 			i=i+1
 		o_para = o_para + v_para +" \" "
+		i = i-1
 
 	if(lines[i].rstrip() == "***OASES***"):
 		i = i+1
@@ -228,6 +229,7 @@ while i < len(lines):
 				oa_para = oa_para+" -"+lines[i].rstrip()+" "
 			i=i+1
 		o_para = o_para + oa_para +" \" "
+		i = i-1
 	
 	if(lines[i].rstrip() == "***SAILFISH INDEX***"):
 		i = i+1
@@ -270,7 +272,8 @@ print o_para
 os.chdir(pathname)
 if (step_number<=2):
 	try:
-		os.system(o_para)
+		print "Hello"
+		#os.system(o_para)
 	except:
 		sys.exit()
 
@@ -289,7 +292,7 @@ if(step_number<=3):
 
 	print ""
 	print sa_index_para
-	os.system(sa_index_para) 
+#	os.system(sa_index_para) 
 
 	if(quant_count == 0):
 		quant_output = pathname + "sailfish_output/pipeline_quant"
@@ -297,7 +300,7 @@ if(step_number<=3):
 	sa_quant_para = sa_quant_para + " -i "+index_output+ " -r " +arguments
 	print ""
 	print sa_quant_para
-	os.system(sa_quant_para)
+#	os.system(sa_quant_para)
 
 
 
