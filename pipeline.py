@@ -8,9 +8,9 @@ import commands
 class pipeline():
 	def getoptions(self):
 		parser = OptionParser()
-		parser.add_option('-o', '--output',dest='foldername',help='Output directory 		prefix',metavar='NAME', action="store")
-		parser.add_option('-i', '--input',dest='inputname',help='Input file',metavar='INPUT', action="store")
-		parser.add_option('-t', '--threshold',dest='threshold',help='Threshold of sequencing cleaning',metavar='INPUT', action="store")
+		parser.add_option('-o', '--output',dest='foldername',help='Output director', action="store")
+		parser.add_option('-i', '--input',dest='inputname',help='Input file', action="store")
+		parser.add_option('-c', '--config',dest='config_file',help='Config file', action="store")
 		(options, args) = parser.parse_args()
 		return options
 		
@@ -83,17 +83,28 @@ except:
 
 n0 = commands.getstatusoutput("which run_seecer.sh")
 n = n0[1]
-n = n.replace("bin/run_seecer.sh", "")
+if "//" in n:
+	n = n.replace("bin//run_seecer.sh", "")
+else:
+	n = n.replace("bin/run_seecer.sh", "")
 
 f1 = os.popen('which oases')
 n1 = f1.read().rstrip()
-n1 = n1.replace("/oases//oases", "/oases/scripts/oases_pipeline.py")
+if "//" in n1:
+	n1 = n1.replace("/oases//oases", "/oases/scripts/oases_pipeline.py")
+else:
+	n1 = n1.replace("/oases/oases", "/oases/scripts/oases_pipeline.py")
 
 f2 = os.popen('which sailfish')
 n2 = f2.read().rstrip()
-n2 = n2.replace("sailfish", "")
+if "//" in n2:
+	n2 = n2.replace("/sailfish", "")
+else:
+	n2 = n2.replace("sailfish", "")
+	
+conf = cl1.config_file
 
-input_file = open('config.txt')
+input_file = open(conf)
 lines = input_file.readlines()
 pathname1 = os.path.abspath(sys.argv[0]).replace("pipeline.py", "")
 
@@ -109,7 +120,10 @@ input_file.close()
 step_number = 0
 cond = "true"
 
+
 ######## Obtain the step number ##########
+
+
 while (cond == "true"):
 	print "Steps in the pipeline"
 	print "1.	SEECER"
@@ -137,12 +151,10 @@ if (thi.upper() == "YES" or thi.upper() == "Y"):
 		input_files[cl] = input_files[cl].replace(".","_")
 		input_files[cl] = input_files[cl]+"_cleared.fa"
 
-os.chdir(n)
-
 ############## Initializations #####################
 
 i=0
-s_para = "run_seecer.sh"
+s_para = "bin/run_seecer.sh"
 o_para = "python " +n1
 v_para = ""
 oa_para = ""
@@ -162,9 +174,8 @@ quant_folder = "sailfish_output/pipeline_quant"
 quant_count = 0
 
 for i10 in range(0,len(input_files)):
-	temp_a = input_files[i10].split("/")
-	if(len(temp_a)<=1):
-		input_files[i10] = pathname1 + input_files[i10]
+	temf = commands.getstatusoutput("readlink -f "+input_files[i10])
+	input_files[i10] = temf[1]
 	if (step_number == 1):
 		arguments = arguments + input_files[i10] + "_corrected.fa" + " "
 		argu1 = argu1 + input_files[i10] + " "
@@ -206,6 +217,7 @@ while i < len(lines):
 				v_para = v_para+" -"+lines[i].rstrip()+" "
 			i=i+1
 		o_para = o_para + v_para +" \" "
+		i = i-1
 
 	if(lines[i].rstrip() == "***OASES***"):
 		i = i+1
@@ -217,6 +229,7 @@ while i < len(lines):
 				oa_para = oa_para+" -"+lines[i].rstrip()+" "
 			i=i+1
 		o_para = o_para + oa_para +" \" "
+		i = i-1
 	
 	if(lines[i].rstrip() == "***SAILFISH INDEX***"):
 		i = i+1
@@ -243,6 +256,7 @@ while i < len(lines):
 			i=i+1
 	i=i+1
 
+os.chdir(n)
 
 ### SEECER execution ###
 for k in input_files:
@@ -258,6 +272,7 @@ print o_para
 os.chdir(pathname)
 if (step_number<=2):
 	try:
+		print "Hello"
 		os.system(o_para)
 	except:
 		sys.exit()
