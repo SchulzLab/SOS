@@ -11,6 +11,7 @@ class pipeline():
 		parser.add_option('-o', '--output',dest='foldername',help='Output director', action="store")
 		parser.add_option('-i', '--input',dest='inputname',help='Input file', action="store")
 		parser.add_option('-c', '--config',dest='config_file',help='Config file', action="store")
+		parser.add_option('-t', '--threshold',dest='threshold',help='Threshold value for file cleaning', action="store")
 		(options, args) = parser.parse_args()
 		return options
 		
@@ -40,20 +41,6 @@ class pipeline():
 		
 		return cnt
 		
-	def sequence_count(self, input_file):
-		y = input_file		
-		x = y.split(".")
-		file = open(y)
-		l_c =0		
-		for i in file.readlines():
-			l_c = l_c + 1 
-		if(x[-1].upper() == "FASTQ" or x[-1].upper() == "FQ"):
-			l_c = l_c/4 
-		if(x[-1].upper() == "FASTA" or x[-1].upper() == "FA"):
-			l_c = l_c/2
-		return l_c 
-
-
 ############### Main Program ###################
 cl = pipeline()
 cl1 = cl.getoptions()
@@ -95,12 +82,12 @@ if "//" in n1:
 else:
 	n1 = n1.replace("/oases/oases", "/oases/scripts/oases_pipeline.py")
 
-f2 = os.popen('which sailfish')
-n2 = f2.read().rstrip()
-if "//" in n2:
-	n2 = n2.replace("/sailfish", "")
-else:
-	n2 = n2.replace("sailfish", "")
+#f2 = os.popen('which sailfish')
+#n2 = f2.read().rstrip()
+#if "//" in n2:
+#	n2 = n2.replace("/sailfish", "")
+#else:
+#	n2 = n2.replace("sailfish", "")
 	
 conf = cl1.config_file
 
@@ -139,17 +126,19 @@ while (cond == "true"):
 
 if step_number==0:
 	sys.exit()
-
-thi = raw_input("Do you want to clean your input files (y/n) : ")
-if (thi.upper() == "YES" or thi.upper() == "Y"):
-	thiv = raw_input("Enter the threshold value :")
-	threshold = int(thiv)
+	
+thi = str(cl1.threshold)
+if (thi != "None"):
+	threshold = int(cl1.threshold)
 	for clf in input_files:
-		os.system("python sequence_cleaner.py -i "+clf+" -t "+str(threshold)+" ")
+		os.system("mkdir "+pathname+"/Jellyfish_Output")
+		os.system("python sequence_cleaner.py -i "+clf+" -t "+str(threshold)+" -o "+pathname+"/Jellyfish_Output")
 
 	for cl in range(0, len(input_files)):
 		input_files[cl] = input_files[cl].replace(".","_")
-		input_files[cl] = input_files[cl]+"_cleared.fa"
+		input_files[cl] = input_files[cl]+"_cleared.fa"		
+		temp_array = input_files[cl].split("/")
+		input_files[cl] = pathname + "/Jellyfish_Output/"+temp_array[-1]
 
 ############## Initializations #####################
 
@@ -209,13 +198,26 @@ while i < len(lines):
 
 	if(lines[i].rstrip() == "***VELVET***"):
 		i = i+1
-		o_para = o_para + " -d \"" + arguments
+		fl = 0
+		file_name=""
+		f_name=""
+		o_para = o_para + " -d \""
 		while(lines[i][0] != "*"):
 			if(lines[i].rstrip() != ""):
 				tmp5 = lines[i].rstrip().split()
 				para5 = para5 + tmp5[0] + " "
 				v_para = v_para+" -"+lines[i].rstrip()+" "
+				if (lines[i].rstrip().upper() == "SHORT" or lines[i].rstrip().upper() == "SHORT2" or lines[i].rstrip().upper() == "LONG"):
+					fl = fl + 1
+					file_name = tmp5[1]
 			i=i+1
+		if (fl == 0):
+			v_para = v_para + arguments
+		if (fl == 1):
+			for inpf in input_files:
+				if inpf!=file_name:
+					f_name = inpf
+			v_para = v_para + f_name
 		o_para = o_para + v_para +" \" "
 		i = i-1
 
@@ -225,7 +227,6 @@ while i < len(lines):
 		while(lines[i][0] != "*"):
 			if(lines[i].rstrip() != ""):
 				tmp6 = lines[i].rstrip().split()
-				para6 = para5 + tmp5[0] + " "
 				oa_para = oa_para+" -"+lines[i].rstrip()+" "
 			i=i+1
 		o_para = o_para + oa_para +" \" "
@@ -242,6 +243,7 @@ while i < len(lines):
 					fold_count = 1
 				sa_index_para = sa_index_para+" -"+lines[i].rstrip()+" "
 			i=i+1
+		i=i-1
 	
 	if(lines[i].rstrip() == "***SAILFISH QUANT***"):
 		i = i+1
@@ -254,6 +256,7 @@ while i < len(lines):
 					quant_count = 1
 				sa_quant_para = sa_quant_para+" -"+lines[i].rstrip()+" "
 			i=i+1
+		i=i-1
 	i=i+1
 
 os.chdir(n)
@@ -261,11 +264,9 @@ os.chdir(n)
 ### SEECER execution ###
 for k in input_files:
 	s_para = s_para+ " " +k
-
 print s_para 
 if(step_number==1):
 	os.system(s_para)
-
 
 ### OASES PIPELINE execution ###
 print o_para
@@ -273,14 +274,13 @@ os.chdir(pathname)
 if (step_number<=2):
 	try:
 		print "Hello"
-		#os.system(o_para)
+		os.system(o_para)
 	except:
 		sys.exit()
 
 
 ### Sailfish execution ###
 os.system("mkdir sailfish_output")
-#os.chdir(n2)
 
 if(step_number<=3):
 	if (fold_count == 0):
@@ -292,7 +292,7 @@ if(step_number<=3):
 
 	print ""
 	print sa_index_para
-#	os.system(sa_index_para) 
+	os.system(sa_index_para) 
 
 	if(quant_count == 0):
 		quant_output = pathname + "sailfish_output/pipeline_quant"
@@ -300,7 +300,7 @@ if(step_number<=3):
 	sa_quant_para = sa_quant_para + " -i "+index_output+ " -r " +arguments
 	print ""
 	print sa_quant_para
-#	os.system(sa_quant_para)
+	os.system(sa_quant_para)
 
 
 
