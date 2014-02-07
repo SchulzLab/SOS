@@ -9,7 +9,7 @@ class pipeline():
 	def getoptions(self):
 		parser = OptionParser()
 		parser.add_option('-o', '--output',dest='foldername',help='Directory in which the output is to be stored', action="store")
-		parser.add_option('-i', '--input',dest='inputname',help='List of files containing the reads (seperated by comma)', action="store")
+		parser.add_option('-i', '--input',dest='inputname',help='List of files containing the reads (seaerated by comma)', action="store")
 		parser.add_option('-c', '--config',dest='config_file',help='Path to the config file', action="store")
 		parser.add_option('-t', '--threshold',dest='threshold',help='Threshold value for file cleaning', action="store")
 		(options, args) = parser.parse_args()
