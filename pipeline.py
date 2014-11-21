@@ -52,6 +52,15 @@ class pipeline():
 ############### Main Program ###################
 output_fil=""
 cl = pipeline()
+cnt = cl.checkprogram("oases")
+cnt = cl.checkprogram("velvetg")
+cnt = cl.checkprogram("velveth")
+cnt = cl.checkprogram("run_seecer.sh")
+cnt = cl.checkprogram("sailfish")
+
+if cnt == 0:
+	sys.exit()
+
 cl1 = cl.getoptions()
 if (cl1.foldername != None):
 	if "/" not in cl1.foldername:
