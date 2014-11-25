@@ -16,7 +16,7 @@ class pipeline():
 		parser.add_option('-r', '--right',dest='right_name',help='Right end read', action="store")
 		
 		parser.add_option('-t', '--threshold',dest='threshold',help='Threshold value for file reduction', action="store")
-		parser.add_option('-p', '--per',dest='perc',help='Percentage', action="store")
+		parser.add_option('-p', '--per',dest='perc',help='Percentage', action="store", default="0")
 		
 		parser.add_option('-c', '--config',dest='config_file',help='Config file', action="store")
 		parser.add_option('-s', '--step',dest='step',help='The step you want start with (1-SEECER(default) 2-OASES 3-SAILFISH)', action="store", default=1)
@@ -131,7 +131,10 @@ else:
 			os.system("cat "+output_f+" >> "+pathn+"/combined_input."+forma)
 			input_files = output_fil.split(",") 
 		else:
-			print "There is a single file"
+			input_f = cl1.inputname
+			i1=os.path.realpath(input_f)
+			form = i1.split(".")
+			forma = form[-1]
 			input_files = cl1.inputname.split(",")
 if input_files[-1]=="":
 	input_files.pop()
@@ -154,7 +157,7 @@ conf = cl1.config_file
 
 input_file = open(conf)
 lines = input_file.readlines()
-pathname1 = os.path.abspath(sys.argv[0]).replace("pipeline_1.py", "")
+pathname1 = os.path.abspath(sys.argv[0]).replace("pipeline.py", "")
 
 if (cl1.foldername != None):
 	if "/" not in cl1.foldername:
