@@ -9,16 +9,16 @@ class pipeline():
 	def getoptions(self):
 		parser = OptionParser()
 		wd = os.getcwd()
-		parser.add_option('-o', '--output',dest='foldername',help='Output director', action="store", default=wd)
+		parser.add_option('-o', '--output',dest='foldername',help='Output directory', action="store", default=wd)
 
-		parser.add_option('-i', '--input',dest='inputname',help='Single end read', action="store")
-		parser.add_option('-l', '--left',dest='left_name',help='Left end read', action="store")		
-		parser.add_option('-r', '--right',dest='right_name',help='Right end read', action="store")
+		parser.add_option('-i', '--input',dest='inputname',help='Single end reads (comma seperated)', action="store")
+		parser.add_option('-l', '--left',dest='left_name',help='Left end reads (comma seperated)', action="store")		
+		parser.add_option('-r', '--right',dest='right_name',help='Right end reads (comma seperated)', action="store")
 		
-		parser.add_option('-t', '--threshold',dest='threshold',help='Threshold value for file reduction', action="store")
-		parser.add_option('-p', '--per',dest='perc',help='Percentage', action="store", default="0")
+		parser.add_option('-t', '--threshold',dest='threshold',help='Threshold value for file reduction (optional)', action="store")
+		parser.add_option('-p', '--per',dest='perc',help='Percentage value for file reduction(optional)', action="store", default="0")
 		
-		parser.add_option('-c', '--config',dest='config_file',help='Config file', action="store")
+		parser.add_option('-c', '--config',dest='config_file',help='Config file (required)', action="store")
 		parser.add_option('-s', '--step',dest='step',help='The step you want start with (1-SEECER(default) 2-OASES 3-SAILFISH)', action="store", default=1)
 		(options, args) = parser.parse_args()
 		return options
