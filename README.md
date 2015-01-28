@@ -35,13 +35,13 @@ Installation
 		cd SOS
 
 2)	Then run the python script install_script.py to install the softwares (SEECER,OASES and SAILFISH)
-		python install_scripts.py -f destination_folder
+		python install_script.py -f <destination_folder>
 	This should install SEECER, OASES and SAILFISH in the provided destination folder. 
 	Note: Running the script is optional. The users can download and install the softwares seperately  
 
 3)	The PATH variable should contain executables of each software and the LD_LIBRARY_PATH variable should contain 'lib' folder of Sailfish.
 	To make this process easier we have included a bash script export.sh. To use this script type the following command:
-		source export.sh folder_name
+		source export.sh <folder_name>
 	Note: To make use of this script all the softwares should be installed in the same directory (folder_name)
 
 4)	To install jellyfish-2.0.0 unpack the .tar file
