@@ -4,8 +4,7 @@ Dilp A Durai (ddurai@contact.mmci.uni-saarland.de)
 Marcel H Schulz (mschulz@mmci.uni-saarland.de)
 
 
-Requirements
-----------------------------
+####Requirements
 for SOS
 	1)	64-bit linux operating system. 
 	2)	A physical memory of around 12 GB is recommended.
