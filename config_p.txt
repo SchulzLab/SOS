@@ -1,0 +1,15 @@
+***SEECER***
+t tmp
+***OASES PIPELINE***
+m 21
+M 30
+***VELVET***
+shortPaired
+interleaved
+***OASES***
+***SAILFISH INDEX***
+k 20
+p 4
+***SAILFISH QUANT***
+p 4
+************
