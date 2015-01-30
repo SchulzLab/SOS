@@ -1,8 +1,5 @@
-#SOS
-
-
-####About
-SOS is a pipeline for *de novo* transcriptome assembly of one or more RNA-seq datasets.
+##About
+*SOS* is a pipeline for *de novo* transcriptome assembly of one or more RNA-seq datasets.
 It currently features:
 * read reduction (under development)
 * error correction with [SEECER ](http://de.wikipedia.org/ "Titel, der beim Überfahren mit der Maus angezeigt wird")
@@ -12,13 +9,13 @@ It currently features:
 * automatic installation
 * config file support to streamline many datasets
 
-###Contact
+#####Contact
 For questions or suggestions regarding SOS please contact
 
 * Dilip A Durai (ddurai_at_contact.mmci.uni-saarland.de)
 * Marcel H Schulz (mschulz_at_mmci.uni-saarland.de)
 
-####Version
+#####Version
 Version 0.1
 
 ##Requirements
@@ -91,10 +88,10 @@ To see the options available with the pipeline run the following command:
 
 ######Sample commands : 
 	for single end : 
-	```python
+```
     python pipeline.py -i Sample_Data/SRR027877-small-p1.fastq 
     -c config_s.txt -o Sample_Output
-    ```
+```
 	for paired end :   
 ```
 	python pipeline.py -l Sample_Data/SRR027877-small-p1.fastq 
