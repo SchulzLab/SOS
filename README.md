@@ -91,15 +91,13 @@ To see the options available with the pipeline run the following command:
         	                2-OASES 3-SAILFISH)
 
 ######Sample commands : 
-	for single end : 
+for single end : 
 ```
-    python pipeline.py -i Sample_Data/SRR027877-small-p1.fastq 
-    -c config_s.txt -o Sample_Output
+    python pipeline.py -i Sample_Data/SRR027877-small-p1.fastq -c config_s.txt -o Sample_Output
 ```
-	for paired end :   
+for paired end :   
 ```
-	python pipeline.py -l Sample_Data/SRR027877-small-p1.fastq 
-	-r Sample_Data/SRR027877-small-p2.fastq -c config_p.txt -o 		Sample_Output
+	python pipeline.py -l Sample_Data/SRR027877-small-p1.fastq -r Sample_Data/SRR027877-small-p2.fastq -c config_p.txt -o Sample_Output
 ```
 
 ######Output Folder
