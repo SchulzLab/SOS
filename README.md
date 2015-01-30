@@ -14,8 +14,9 @@ It currently features:
 
 ###Contact
 For questions or suggestions regarding SOS please contact
-*Dilp A Durai (ddurai@contact.mmci.uni-saarland.de)
-*Marcel H Schulz (mschulz@mmci.uni-saarland.de)
+
+* Dilip A Durai (ddurai_at_contact.mmci.uni-saarland.de)
+* Marcel H Schulz (mschulz_at_mmci.uni-saarland.de)
 
 ####Version
 Version 0.1
