@@ -19,7 +19,8 @@ For questions or suggestions regarding SOS please contact
 Version 0.1
 
 ##Requirements
-for SOS
+for SOS:
+
 1.	64-bit linux operating system. 
 2.	A physical memory of 12 GB or higher is recommended (more is always better!)
 3.	Jellyfish version 2.0
