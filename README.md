@@ -1,9 +1,15 @@
 #SOS
 
 
-##About
-SOS is a pipeline for *de novo* transcriptome assembly from one or more RNA-seq datasets.
-It 
+####About
+SOS is a pipeline for *de novo* transcriptome assembly of one or more RNA-seq datasets.
+It currently features:
+* read reduction (experimental)
+* error correction with [SEECER ](http://de.wikipedia.org/ "Titel, der beim Überfahren mit der Maus angezeigt wird")
+* de novo assembly with Oases-M
+* transcript quantification using Sailfish
+* automatic parameter estimation of kmer values for the assembly and error correction (in development)
+* automatic installation
 
 As Oases is a multi-kmer assembler, users need to choose the range of k values. We are currently adding an automatic procedure to SOS, where the user does not need to define the maximal k
 
