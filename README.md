@@ -15,8 +15,7 @@ for SAILFISH
 	1)	Any version of [g++](gcc.gnu.org) >= 4.7
 
 
-Downloading
------------------------------
+####Download
 The pipeline can be downloaded using the following command:
 	git clone https://github.com/SchulzLab/SOS
 The downloaded folder should have the following files:
@@ -28,22 +27,22 @@ The downloaded folder should have the following files:
 	Jellyfish-2.0.0.tar
 	Sample_Data (folder)
 
-Installation
------------------------------
-1)	After downloading the SOS distribution, change into the directory
+####Installation
+
+1.	After downloading the SOS distribution, change into the directory
 		cd SOS
 
-2)	Then run the python script install_script.py to install the softwares (SEECER,OASES and SAILFISH)
+2.	Then run the python script install_script.py to install the softwares (SEECER,OASES and SAILFISH)
 		python install_script.py -f <destination_folder>
 	This should install SEECER, OASES and SAILFISH in the provided destination folder. 
 	Note: Running the script is optional. The users can download and install the softwares seperately  
 
-3)	The PATH variable should contain executables of each software and the LD_LIBRARY_PATH variable should contain 'lib' folder of Sailfish.
+3.	The PATH variable should contain executables of each software and the LD_LIBRARY_PATH variable should contain 'lib' folder of Sailfish.
 	To make this process easier we have included a bash script export.sh. To use this script type the following command:
 		source export.sh <folder_name>
 	Note: To make use of this script all the softwares should be installed in the same directory (folder_name)
 
-4)	To install jellyfish-2.0.0 unpack the .tar file
+4.	To install jellyfish-2.0.0 unpack the .tar file
 		tar -xvf jellyfish-2.0.0.tar
 	change to the directory 
 		cd jellyfish-2.0.0
