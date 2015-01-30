@@ -2,9 +2,9 @@
 **SOS** is a pipeline for *de novo* transcriptome assembly of one or more RNA-seq datasets.
 It currently features:
 * read reduction (under development)
-* error correction with [SEECER ](http://de.wikipedia.org/ "Titel, der beim Überfahren mit der Maus angezeigt wird")
-* de novo assembly with Oases-M
-* transcript quantification using Sailfish
+* error correction with [SEECER](http://sb.cs.cmu.edu/seecer/)
+* de novo assembly with [Oases](https://www.ebi.ac.uk/~zerbino/oases/)
+* transcript quantification using [Sailfish](http://www.cs.cmu.edu/~ckingsf/software/sailfish/)
 * automatic parameter estimation of kmer values for the assembly and error correction (under development)
 * automatic installation
 * config file support to streamline many datasets
@@ -23,7 +23,7 @@ for SOS:
 
 1.	64-bit linux operating system. 
 2.	A physical memory of 12 GB or higher is recommended (more is always better!)
-3.	Jellyfish version 2.0
+3.	[Jellyfish](http://www.cbcb.umd.edu/software/jellyfish/) version 2.0  
 4.	GNU Scientific Library (SEECER)
 5.  Any version of [g++](gcc.gnu.org) >= 4.7 (Sailfish)
 
