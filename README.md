@@ -63,14 +63,14 @@ The downloaded folder should have the following files:
 	Note: To make use of this script all the softwares should be installed in the same directory (folder_name)
 
 4.	To install jellyfish-2.0.0 unpack the .tar file
-	*	tar -xvf jellyfish-2.0.0.tar
+		tar -xvf jellyfish-2.0.0.tar
 	change to the directory 
-	*	cd jellyfish-2.0.0
+		cd jellyfish-2.0.0
 	complie jellyfish
-	*	./configure
-	*	make
+		./configure
+		make
 	set the PATH variable 
-	*	export PATH=/install dir/:$PATH  
+		export PATH=/install dir/:$PATH  
 
 ##Usage
 
