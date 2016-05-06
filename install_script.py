@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 from optparse import OptionParser
 import subprocess
@@ -19,7 +20,7 @@ class install_script():
 			chk = self.checkfolder("oases")
 			
 			if(chk == False):
-				os.system("git clone git://github.com/dzerbino/oases.git")
+				os.system("git clone --recursive http://github.com/dzerbino/oases.git")
 			else:
 				print ("The path already contains a folder named oases. please rename the folder or remove it from the path")
 				sys.exit()
@@ -73,7 +74,7 @@ class install_script():
 		if(prog==2):
 			chk6 = self.checkfolder("oases")
 			if(chk6 == False):
-				os.system("git clone git://github.com/dzerbino/oases.git")
+				os.system("git clone http://github.com/dzerbino/oases.git")
 			else:
 				print ("The path already contains a folder named oases. please rename the folder or remove it from the path")
 				sys.exit()
@@ -92,7 +93,7 @@ class install_script():
 		if(prog==5):
 			chk5 = self.checkfolder("velvet")
 			if(chk5 == False):
-				os.system("git clone git://github.com/dzerbino/velvet.git")
+				os.system("git clone http://github.com/dzerbino/velvet.git")
 			else:
 				print ("The path already contains a folder named velvet. please rename the folder or remove it from the path")
 				sys.exit()
