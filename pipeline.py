@@ -172,7 +172,7 @@ else:
 input_file.close()
 step_number = 0
 cond = "true"
-######## Obtain the step number ##########
+######## Obtain the step number #########
 
 step_number=int(cl1.step)
 
