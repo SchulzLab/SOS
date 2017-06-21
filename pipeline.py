@@ -4,6 +4,7 @@ import optparse
 from optparse import OptionParser
 from optparse import Option, OptionValueError
 import commands
+import os.path
 
 class pipeline():
 	def getoptions(self):
@@ -15,11 +16,11 @@ class pipeline():
 		parser.add_option('-l', '--left',dest='left_name',help='Left end reads (comma seperated)', action="store")		
 		parser.add_option('-r', '--right',dest='right_name',help='Right end reads (comma seperated)', action="store")
 		
-		parser.add_option('-t', '--threshold',dest='threshold',help='Threshold value for file reduction (optional)', action="store")
-		parser.add_option('-p', '--per',dest='perc',help='Percentage value for file reduction(optional)', action="store", default="0")
+		#parser.add_option('-t', '--threshold',dest='threshold',help='Threshold value for file reduction (optional)', action="store")
+		parser.add_option('-b', '--base',dest='base',help='Logarithm Base value for file reduction(optional)', action="store")
 		
 		parser.add_option('-c', '--config',dest='config_file',help='Config file (required)', action="store")
-		parser.add_option('-s', '--step',dest='step',help='The step you want start with (1-SEECER(default) 2-OASES 3-SAILFISH)', action="store", default=1)
+		parser.add_option('-s', '--step',dest='step',help='The step you want start with (1-SEECER(default) 2-OASES 3-Salmon)', action="store", default=1)
 		(options, args) = parser.parse_args()
 		return options
 	
@@ -42,12 +43,13 @@ class pipeline():
 				print "SEECER not found in the path variable. Please set the path variable to the SEECER/bin folder"
 				cnt = 0
 
-		if("sailfish" in program):
+		if("Salmon" in program):
 			if(output1[1]==""):
-				print "sailfish not found in the path variable. Please set the path variable to the sailfish bin folder"
+				print "Salmon not found in the path variable. Please set the path variable to the Salmon bin folder"
 				cnt = 0
 		
 		return cnt
+	
 		
 ############### Main Program ###################
 output_fil=""
@@ -56,7 +58,7 @@ cnt = cl.checkprogram("oases")
 cnt = cl.checkprogram("velvetg")
 cnt = cl.checkprogram("velveth")
 cnt = cl.checkprogram("run_seecer.sh")
-cnt = cl.checkprogram("sailfish")
+cnt = cl.checkprogram("salmon")
 
 if cnt == 0:
 	sys.exit()
@@ -68,7 +70,9 @@ if (cl1.foldername != None):
 	else:
 		a_pathn = cl1.foldername + "/"
 pathn = os.path.realpath(a_pathn)
-os.system("mkdir "+pathn)
+
+if(not(os.path.exists(pathn))):
+	os.system("mkdir "+pathn)
 
 if cl1.left_name == None and cl1.right_name !=None:
 	print "Missing one end"
@@ -97,11 +101,9 @@ else:
 			form = os.path.realpath(cl1.left_name).split(".")
 			forma = form[-1]
 			output_fil = output_fil + os.path.realpath(cl1.left_name) + ","
-		
 		if "," in cl1.right_name:		
 			input_right = cl1.right_name.split(",")
 			output_right=""
-
 			for i in input_right:
 				i1=os.path.realpath(i)
 				form = i1.split(".")
@@ -114,7 +116,7 @@ else:
 			form = os.path.realpath(cl1.right_name).split(".")
 			forma = form[-1]
 			output_fil = output_fil + os.path.realpath(cl1.right_name) + ","
-		print output_fil		
+	
 		input_files = output_fil.split(",") 
 	
 	else:
@@ -138,9 +140,9 @@ else:
 			input_files = cl1.inputname.split(",")
 if input_files[-1]=="":
 	input_files.pop()
-
 n0 = commands.getstatusoutput("which run_seecer.sh")
 n = n0[1]
+
 if "//" in n:
 	n = n.replace("bin//run_seecer.sh", "")
 else:
@@ -170,8 +172,6 @@ else:
 input_file.close()
 step_number = 0
 cond = "true"
-
-
 ######## Obtain the step number ##########
 
 step_number=int(cl1.step)
@@ -179,30 +179,14 @@ step_number=int(cl1.step)
 if step_number==0:
 	sys.exit()
 
-####### Clearing the file ########	
-thi = str(cl1.threshold)
-per1 = (cl1.perc)
-red_flag = 0
-if (thi != "None"):
-	red_flag = 1
-	for clf in input_files:
-		os.system("cat "+clf+" >> "+pathn+"/Combined."+forma)	
-	threshold = int(cl1.threshold)
-	os.system("mkdir "+pathn+"/Jellyfish_Output")
-	os.system("python sequence_cleaner.py -i "+pathn+"/Combined."+forma+" -t "+str(threshold)+" -o "+pathn+"/Jellyfish_Output -p " +per1)
-	je_file = pathn+"/Jellyfish_Output/Combined_"+forma+"_cleared.fa"
-	input_files = je_file.split(",")	
-	
-############## Initializations #####################
-
 i=0
 s_para = "bin/run_seecer.sh"
 o_para = "python " +n1
 v_para = ""
 oa_para = ""
 str_input = ""
-sa_index_para = "sailfish index "
-sa_quant_para = "sailfish quant "
+sa_index_para = "salmon index "
+sa_quant_para = "salmon quant "
 para1 = ""
 para2 = ""
 para3 = ""
@@ -211,11 +195,42 @@ para5 = ""
 para6 = ""
 argu1 = ""
 arguments = ""
-index_folder = "sailfish_output/pipeline_index"
+index_folder = "Salmon_output/pipeline_index"
 fold_count = 0
-quant_folder = "sailfish_output/pipeline_quant"
+quant_folder = "Salmon_output/pipeline_quant"
 quant_count = 0
 
+while i < len(lines):
+	if(lines[i].rstrip() == "***OASES PIPELINE***"):
+		i = i+1
+		while(lines[i][0] != "*"):
+			if(lines[i][0] == "m"):
+				tmp3 = lines[i].rstrip().split()
+				mkmer = tmp3[-1]
+			i=i+1
+	i=i+1
+
+
+####### Clearing the file ########	
+base = (cl1.base)
+red_flag = 0
+if (base is "None"):
+	print("Skipping normalization step")
+else:
+	if(not(os.path.exists(pathn+"/Normalization_Output"))):
+		os.system("mkdir "+pathn+"/Normalization_Output")
+	if cl1.left_name != None and cl1.right_name != None:
+		red_flag = 1
+		os.system("ORNA -pair1 "+input_files[0]+" -pair2 "+input_files[1]+" -base "+str(base)+" -output "+pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa -kmer " +mkmer+" >"+pathn+ "/logfiles/Normalization_log.txt 2>&1")			
+	else:	
+		red_flag = 1
+		os.system(">"+pathn+"/Combined."+forma)
+		for clf in input_files:
+			os.system("cat "+clf+" >> "+pathn+"/Combined."+forma)	
+		os.system("ORNA -input "+pathn+"/Combined."+forma+" -base "+str(base)+" -output "+pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa -kmer " +mkmer +" >"+pathn+ "/logfiles/Normalization_log.txt 2>&1")
+	je_file = pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa"
+	input_files = je_file.split(",")	
+	
 for i10 in range(0,len(input_files)):
 	str_input = str_input + input_files[i10] + " "
 	temf = commands.getstatusoutput("readlink -f "+input_files[i10])
@@ -226,31 +241,34 @@ for i10 in range(0,len(input_files)):
 	else:
 		arguments = arguments + input_files[i10] + " "
 		argu1 = argu1 + input_files[i10] + " "
-			
-############## collecting parameters #####################
 
+
+############## collecting parameters #####################
+i=0
 while i < len(lines):
 	if(lines[i].rstrip() == "***SEECER***"):
 		i = i+1
 		while(lines[i][0] != "*"):
 			if lines[i][0] == "t":
-				temp = lines[i].rstrip().split()				
-				os.system("mkdir %s" % temp[1])
+				temp = lines[i].rstrip().split()
+				if(not(os.path.exists(temp[1]))):				
+					os.system("mkdir %s" % temp[1])
 			if (lines[i].rstrip() != ""):
 				tmp1 = lines[i].rstrip().split()				
 				para1 = para1 + tmp1[0] + " "			
 				s_para = s_para+" -"+lines[i].rstrip()+" "
 			i=i+1
-	
 	if(lines[i].rstrip() == "***OASES PIPELINE***"):
 		i = i+1
 		while(lines[i][0] != "*"):
+			if(lines[i][0] == "m"):
+				tmp3 = lines[i].rstrip().split()
+				mkmer = tmp3[-1]
 			if(lines[i].rstrip() != ""):
 				tmp2 = lines[i].rstrip().split()
 				para2 = para2 + tmp2[0] + " "
 				o_para = o_para+" -"+lines[i].rstrip()+" "
 			i=i+1
-
 	if(lines[i].rstrip() == "***VELVET***"):
 		i = i+1
 		fl = 0
@@ -280,7 +298,6 @@ while i < len(lines):
 			v_para = v_para + f_name
 		o_para = o_para + v_para +" \" "
 		i = i-1
-
 	if(lines[i].rstrip() == "***OASES***"):
 		i = i+1
 		o_para = o_para + " -p \"" 
@@ -291,21 +308,20 @@ while i < len(lines):
 			i=i+1
 		o_para = o_para + oa_para +" \" "
 		i = i-1
-	
-	if(lines[i].rstrip() == "***SAILFISH INDEX***"):
+	if(lines[i].rstrip() == "***SALMON INDEX***"):
 		i = i+1
 		while(lines[i][0] != "*"):
 			if(lines[i].rstrip() != ""):
 				tmp3 = lines[i].rstrip().split()
 				para3 = para3 + tmp3[0] + " "
-				if(tmp3[0] == "o"):
+				if(tmp3[0] == "i"):
 					index_folder = tmp3[1]
 					fold_count = 1
 				sa_index_para = sa_index_para+" -"+lines[i].rstrip()+" "
 			i=i+1
 		i=i-1
 	
-	if(lines[i].rstrip() == "***SAILFISH QUANT***"):
+	if(lines[i].rstrip() == "***SALMON QUANT***"):
 		i = i+1
 		while(lines[i][0] != "*"):
 			if(lines[i].rstrip() != ""):
@@ -318,9 +334,11 @@ while i < len(lines):
 			i=i+1
 		i=i-1
 	i=i+1
-
 os.chdir(n)
-os.system("mkdir "+pathn+"/logfiles/")
+if (not(os.path.exists(pathn+"/logfiles/"))):
+	os.system("mkdir "+pathn+"/logfiles/")
+
+
 ### SEECER execution ###
 if(step_number==1):
 	for k in input_files:
@@ -331,6 +349,7 @@ if(step_number==1):
 	if(step_number==1):
 		os.system("bash "+s_para+" >>"+pathn+"/logfiles/seecer_log.txt 2>&1")
 	
+
 ### Check SEECER ###
 if(step_number==1):
 	ffcs = 0
@@ -344,8 +363,8 @@ if(step_number==1):
 	else:
 		print "SEECER executed successfully"
 		
-### OASES PIPELINE execution ###
 
+### OASES PIPELINE execution ###
 with open(pathn + "/logfiles/commands.txt","a") as command_file:
 	command_file.write(o_para)
 	command_file.write("\n")
@@ -356,6 +375,7 @@ if (step_number<=2):
 		os.system(o_para+" >"+pathn+"/logfiles/oases_log.txt 2>&1")
 	except:
 		sys.exit()
+
 
 ### Check oases ###
 ffco = 0
@@ -369,26 +389,26 @@ else:
 	print "OASES executed successfully"
 
 
-
-### Sailfish execution ###
-os.system("mkdir sailfish_output")
+### Salmon execution ###
+if(not(os.path.exists("Salmon_output"))):
+	os.system("mkdir Salmon_output")
 
 if(step_number<=3):
 	if (fold_count == 0):
-		index_output = pathn + "/sailfish_output/pipeline_index"
-		sa_index_para = sa_index_para + " -o " + index_output
+		index_output = pathn + "/Salmon_output/pipeline_index"
+		sa_index_para = sa_index_para + " -i " + index_output
 
 	index_transcripts = pathn + "/oasesPipelineMerged/transcripts.fa"
-	sa_index_para = sa_index_para + " -t "+index_transcripts+ " --force" 
+	sa_index_para = sa_index_para + " -t "+index_transcripts+ "" 
 
 	with open(pathn + "/logfiles/commands.txt","a") as command_file:
 		command_file.write(sa_index_para)
 		command_file.write("\n")
 		
-	os.system(sa_index_para+" >"+pathn+ "/logfiles/sailfish_index_log.txt 2>&1") 
+	os.system(sa_index_para+" >"+pathn+ "/logfiles/Salmon_index_log.txt 2>&1") 
 
 	if(quant_count == 0):
-		quant_output = pathn + "/sailfish_output/pipeline_quant"
+		quant_output = pathn + "/Salmon_output/pipeline_quant"
 		sa_quant_para = sa_quant_para + " -o " + quant_output
 	sa_quant_para = sa_quant_para + " -i "+index_output+ " -r " +str_input
 	
@@ -396,27 +416,27 @@ if(step_number<=3):
 		command_file.write(sa_quant_para)
 		command_file.write("\n")
 		
-	os.system(sa_quant_para+" >"+pathn+"/logfiles/sailfish_quant_log.txt 2>stderr.txt")
+	os.system(sa_quant_para+" >"+pathn+"/logfiles/Salmon_quant_log.txt 2>stderr.txt")
 	
-### Check Sailfish ###
+
+### Check Salmon ###
 ffcsa = 0
 ccesa = os.path.exists(quant_output + "/quant.sf")
 if ccesa == False:
 	ffcsa = 1
 if ffcsa == 1:
-	print "Sailfish did not run properly. Please see the log files and try again"
+	print "Salmon did not run properly. Please see the log files and try again"
 	sys.exit()
 else:
-	print "Sailfish executed successfully"
+	print "Salmon executed successfully"
 
 
 ######## Collecting Outputs ###########
 os.chdir(pathn)
-os.system("mkdir Final_Output")
+if(not(os.path.exists("Final_Output"))):
+	os.system("mkdir Final_Output")
+
 os.system("mv " +quant_output+ "/quant.sf Final_Output/")
 os.system("mv " +index_transcripts+ " Final_Output/")
 for i in input_files:
 	os.system("mv " +i+ "_corrected.fa Final_Output/")
-
-
-	

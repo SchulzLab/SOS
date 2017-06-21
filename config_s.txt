@@ -5,9 +5,10 @@ m 21
 M 30
 ***VELVET***
 ***OASES***
-***SAILFISH INDEX***
-k 20
+***SALMON INDEX***
+k 21
 p 4
-***SAILFISH QUANT***
+***SALMON QUANT***
 p 4
+l IU
 ************
