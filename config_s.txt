@@ -9,6 +9,6 @@ M 30
 k 21
 p 4
 ***SALMON QUANT***
-p 4
+p 3
 l IU
 ************
