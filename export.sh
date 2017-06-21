@@ -4,6 +4,3 @@ export PATH=${ABSPAT}/SEECER-0.1.3/SEECER/bin/:$PATH
 export PATH=${ABSPAT}/oases/:$PATH
 export PATH=${ABSPAT}/velvet/:$PATH
 export PATH=${ABSPAT}/Sailfish-0.6.2-Linux_x86-64/bin/:$PATH
-export PATH=/MMCI/MS/DeNovoAssembly2/work/ORNA/build/bin:$PATH
-export LD_LIBRARY_PATH=${ABSPAT}/Sailfish-0.6.2-Linux_x86-64/lib/:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
