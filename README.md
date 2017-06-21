@@ -4,7 +4,7 @@ It currently features:
 * read reduction (under development)
 * error correction with [SEECER](http://sb.cs.cmu.edu/seecer/)
 * de novo assembly with [Oases](https://www.ebi.ac.uk/~zerbino/oases/)
-* transcript quantification using [Sailfish](http://www.cs.cmu.edu/~ckingsf/software/sailfish/)
+* transcript quantification using [Salmon](https://github.com/COMBINE-lab/salmon)
 * automatic parameter estimation of kmer values for the assembly and error correction (under development)
 * automatic installation
 * config file support to streamline many datasets
