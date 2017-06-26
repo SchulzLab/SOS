@@ -166,20 +166,6 @@ class install_script():
 					self.export_prog(i)
 				else:
 					print "Sailfish was not installed properly. Please try again"
-					
-	def export_prog(self, pro):
-		if "SEECER-0.1.3" in pro:
-			os.system("export PATH="+pro+"/bin/:$PATH")
-		if "oases" in pro:
-			os.system("export PATH="+pro+":$PATH")
-		if "velvet" in pro:
-			os.system("export PATH="+pro+":$PATH")
-		if "Sailfish-0.6.2-Linux_x86-64" in pro:
-			os.system("export PATH="+pro+"/bin:$PATH")
-			os.system("export LD_LIBRARY_PATH="+pro+"/lib:$LD_LIBRARY_PATH")
-		if "Sailfish-0.6.2-Mac_x86-64" in pro:
-			os.system("export DYLD_LIBRARY_PATH="+pro+"/lib:$DYLD_LIBRARY_PATH")
-	
 
 ########### MAIN PROGRAM ###########3
 

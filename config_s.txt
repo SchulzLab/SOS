@@ -1,10 +1,10 @@
 ***SEECER***
 t tmp
-***OASES PIPELINE***
-m 21
-M 30
-***VELVET***
-***OASES***
+***KREATION****
+Program Name	oases_pipeline_2.py
+Output file name	transcripts.fa
+Minimum K	-m 21
+Rest of the command	-d "/path-to-the-fasta-file/MAQC_Combined.fasta_corrected.fa" -p ""
 ***SALMON INDEX***
 k 21
 p 4
