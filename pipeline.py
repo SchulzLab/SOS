@@ -258,6 +258,7 @@ while i < len(lines):
 				para1 = para1 + tmp1[0] + " "			
 				s_para = s_para+" -"+lines[i].rstrip()+" "
 			i=i+1
+
 	if(lines[i].rstrip() == "***OASES PIPELINE***"):
 		i = i+1
 		while(lines[i][0] != "*"):
@@ -269,6 +270,7 @@ while i < len(lines):
 				para2 = para2 + tmp2[0] + " "
 				o_para = o_para+" -"+lines[i].rstrip()+" "
 			i=i+1
+
 	if(lines[i].rstrip() == "***VELVET***"):
 		i = i+1
 		fl = 0
