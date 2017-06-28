@@ -6,6 +6,7 @@ from optparse import Option, OptionValueError
 import commands
 import os.path
 
+
 class pipeline():
 	def getoptions(self):
 		parser = OptionParser()
