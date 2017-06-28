@@ -16,7 +16,7 @@ class pipeline():
 		parser.add_option('-l', '--left',dest='left_name',help='Left end reads (comma seperated)', action="store")		
 		parser.add_option('-r', '--right',dest='right_name',help='Right end reads (comma seperated)', action="store")
 		
-		#parser.add_option('-t', '--threshold',dest='threshold',help='Threshold value for file reduction (optional)', action="store")
+		parser.add_option('-t', '--threshold',dest='threshold',help='Threshold value for KREATION (optional)', action="store")
 		parser.add_option('-b', '--base',dest='base',help='Logarithm Base value for file reduction(optional)', action="store")
 		
 		parser.add_option('-c', '--config',dest='config_file',help='Config file (required)', action="store")
@@ -49,7 +49,127 @@ class pipeline():
 				cnt = 0
 		
 		return cnt
+
+	def obtainseecer(self, config_file):
+		s_para = "bin/run_seecer.sh"	
+		input_file = open(config_file)
+		lines = input_file.readlines()
+		i=0
+		while i < len(lines):
+			if(lines[i].rstrip() == "***SEECER***"):
+				i = i+1
+				while(lines[i][0] != "*"):
+					if lines[i][0] == "t":
+						temp = lines[i].rstrip().split()
+						if(not(os.path.exists(temp[1]))):				
+							os.system("mkdir %s" % temp[1])
+					if (lines[i].rstrip() != ""):
+						tmp1 = lines[i].rstrip().split("	")				
+						s_para = s_para+" -"+tmp1[0]+" "+tmp1[1]+" "
+					i=i+1
+			i=i+1
+		return s_para
 	
+	def obtainoases(self, config_file, arguments, output):
+		input_file = open(config_file)
+		lines = input_file.readlines()		
+		f1 = os.popen('which oases')
+		n1 = f1.read().rstrip()
+		if "//" in n1:
+			n1 = n1.replace("/oases//oases", "/oases/scripts/oases_pipeline.py")
+		else:
+			n1 = n1.replace("/oases/oases", "/oases/scripts/oases_pipeline.py")
+		o_para = "python " +n1
+		v_para = ""
+		oa_para = ""
+	
+		i=0
+		while i < len(lines):
+			if(lines[i].rstrip() == "***OASES PIPELINE***"):
+				i = i+1
+				while(lines[i][0] != "*"):
+					if(lines[i][0] == "m"):
+						tmp3 = lines[i].rstrip().split("	")
+						mkmer = tmp3[-1]
+					if(lines[i].rstrip() != ""):
+						tmp2 = lines[i].rstrip().split("	")
+						#para2 = para2 + tmp2[0] + " "
+						o_para = o_para+" -"+tmp2[0]+" "+tmp2[1]+" "
+					i=i+1
+
+
+			if(lines[i].rstrip() == "***VELVET***"):
+				i = i+1
+				fl = 0
+				file_name=""
+				f_name=""
+				o_para = o_para + " -d \""
+				while(lines[i][0] != "*"):
+					if(lines[i].rstrip() != ""):
+						tmp5 = lines[i].rstrip().split("	")
+						#para5 = para5 + tmp5[0] + " "
+						v_para = v_para+" -"+tmp5[0]+" "+tmp5[1]+" "
+						if (lines[i].rstrip().upper() == "SHORT" or lines[i].rstrip().upper() == "SHORT2" or lines[i].rstrip().upper() == "LONG"):
+							fl = fl + 1
+						#file_name = tmp5[1]
+					i=i+1
+				if (fl == 0):
+					v_para = v_para + arguments
+				if (fl == 1):
+					for inpf in input_files:
+						if inpf!=file_name:
+							f_name = inpf
+					v_para = v_para + f_name
+				o_para = o_para + v_para +" \" "
+				i = i-1
+			if(lines[i].rstrip() == "***OASES***"):
+				i = i+1
+				o_para = o_para + " -p \"" 
+				while(lines[i][0] != "*"):
+					if(lines[i].rstrip() != ""):
+						tmp6 = lines[i].rstrip().split("	")
+						oa_para = oa_para+" -"+tmp6[0]+" "+tmp6[1]+" "
+					i=i+1
+				o_para = o_para + oa_para +" \" "
+				i = i-1
+			i=i+1
+		
+		o_para = o_para + "-o /"+output+"/OasesPipeline"
+		return o_para
+
+	def obtainsalmon(self, config_file):
+		input_file = open(config_file)
+		lines = input_file.readlines()
+		sa_index_para = "salmon index "
+		sa_quant_para = "salmon quant "		
+		i=0
+		while i < len(lines):
+			if(lines[i].rstrip() == "***SALMON INDEX***"):
+				i = i+1
+				while(lines[i][0] != "*"):
+					if(lines[i].rstrip() != ""):
+						tmp3 = lines[i].rstrip().split("	")
+						#para3 = para3 + tmp3[0] + " "
+					if(tmp3[0] == "i"):
+						index_folder = tmp3[1]
+						fold_count = 1
+					sa_index_para = sa_index_para+" -"+tmp3[0]+" "+tmp3[1]+" "
+					i=i+1
+				i=i-1
+	
+			if(lines[i].rstrip() == "***SALMON QUANT***"):
+				i = i+1
+				while(lines[i][0] != "*"):
+					if(lines[i].rstrip() != ""):
+						tmp4 = lines[i].rstrip().split("	")
+						if(tmp4[0] == "o"):
+							quant_folder = tmp4[1]
+							quant_count = 1
+						sa_quant_para = sa_quant_para+" -"+tmp4[0]+" "+tmp4[1]+" "
+					i=i+1
+				i=i-1
+			i=i+1
+		return sa_index_para, sa_quant_para
 		
 ############### Main Program ###################
 output_fil=""
@@ -138,6 +258,7 @@ else:
 			form = i1.split(".")
 			forma = form[-1]
 			input_files = cl1.inputname.split(",")
+
 if input_files[-1]=="":
 	input_files.pop()
 n0 = commands.getstatusoutput("which run_seecer.sh")
@@ -180,7 +301,6 @@ if step_number==0:
 	sys.exit()
 
 i=0
-s_para = "bin/run_seecer.sh"
 o_para = "python " +n1
 v_para = ""
 oa_para = ""
@@ -212,24 +332,24 @@ while i < len(lines):
 
 
 ####### Clearing the file ########	
-base = (cl1.base)
-red_flag = 0
-if (base is "None"):
-	print("Skipping normalization step")
-else:
-	if(not(os.path.exists(pathn+"/Normalization_Output"))):
-		os.system("mkdir "+pathn+"/Normalization_Output")
-	if cl1.left_name != None and cl1.right_name != None:
-		red_flag = 1
-		os.system("ORNA -pair1 "+input_files[0]+" -pair2 "+input_files[1]+" -base "+str(base)+" -output "+pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa -kmer " +mkmer+" >"+pathn+ "/logfiles/Normalization_log.txt 2>&1")			
-	else:	
-		red_flag = 1
-		os.system(">"+pathn+"/Combined."+forma)
-		for clf in input_files:
-			os.system("cat "+clf+" >> "+pathn+"/Combined."+forma)	
-		os.system("ORNA -input "+pathn+"/Combined."+forma+" -base "+str(base)+" -output "+pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa -kmer " +mkmer +" >"+pathn+ "/logfiles/Normalization_log.txt 2>&1")
-	je_file = pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa"
-	input_files = je_file.split(",")	
+#base = (cl1.base)
+#red_flag = 0
+#if (base is "None"):
+#	print("Skipping normalization step")
+#else:
+#	if(not(os.path.exists(pathn+"/Normalization_Output"))):
+#		os.system("mkdir "+pathn+"/Normalization_Output")
+#	if cl1.left_name != None and cl1.right_name != None:
+#		red_flag = 1
+#		os.system("ORNA -pair1 "+input_files[0]+" -pair2 "+input_files[1]+" -base "+str(base)+" -output "+pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa -kmer " +mkmer+" >"+pathn+ "/logfiles/Normalization_log.txt 2>&1")			
+#	else:	
+#		red_flag = 1
+#		os.system(">"+pathn+"/Combined."+forma)
+#		for clf in input_files:
+#			os.system("cat "+clf+" >> "+pathn+"/Combined."+forma)	
+#		os.system("ORNA -input "+pathn+"/Combined."+forma+" -base "+str(base)+" -output "+pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa -kmer " +mkmer +" >"+pathn+ "/logfiles/Normalization_log.txt 2>&1")
+#	je_file = pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa"
+#	input_files = je_file.split(",")	
 	
 for i10 in range(0,len(input_files)):
 	str_input = str_input + input_files[i10] + " "
@@ -243,100 +363,12 @@ for i10 in range(0,len(input_files)):
 		argu1 = argu1 + input_files[i10] + " "
 
 
-############## collecting parameters #####################
-i=0
-while i < len(lines):
-	if(lines[i].rstrip() == "***SEECER***"):
-		i = i+1
-		while(lines[i][0] != "*"):
-			if lines[i][0] == "t":
-				temp = lines[i].rstrip().split()
-				if(not(os.path.exists(temp[1]))):				
-					os.system("mkdir %s" % temp[1])
-			if (lines[i].rstrip() != ""):
-				tmp1 = lines[i].rstrip().split()				
-				para1 = para1 + tmp1[0] + " "			
-				s_para = s_para+" -"+lines[i].rstrip()+" "
-			i=i+1
+print str_input
+#####Collecting Parameters for each program #########
+s_para=cl.obtainseecer(cl1.config_file)
+o_para=cl.obtainoases(cl1.config_file, arguments, pathn)
+sa_index_para, sa_quant_para=cl.obtainsalmon(cl1.config_file)
 
-	if(lines[i].rstrip() == "***OASES PIPELINE***"):
-		i = i+1
-		while(lines[i][0] != "*"):
-			if(lines[i][0] == "m"):
-				tmp3 = lines[i].rstrip().split()
-				mkmer = tmp3[-1]
-			if(lines[i].rstrip() != ""):
-				tmp2 = lines[i].rstrip().split()
-				para2 = para2 + tmp2[0] + " "
-				o_para = o_para+" -"+lines[i].rstrip()+" "
-			i=i+1
-
-
-	if(lines[i].rstrip() == "***VELVET***"):
-		i = i+1
-		fl = 0
-		file_name=""
-		f_name=""
-		o_para = o_para + " -d \""
-		while(lines[i][0] != "*"):
-			if(lines[i].rstrip() != ""):
-				tmp5 = lines[i].rstrip().split()
-				if((tmp5[0] == "interleaved") and (red_flag==1)):
-					print "Ignoring interleaved option because of read reduction"
-				elif((tmp5[0] == "shortPaired") and (red_flag==1)):
-					print "Ignoring shortPaired option because of read reduction"
-				else:				
-					para5 = para5 + tmp5[0] + " "
-					v_para = v_para+" -"+lines[i].rstrip()+" "
-					if (lines[i].rstrip().upper() == "SHORT" or lines[i].rstrip().upper() == "SHORT2" or lines[i].rstrip().upper() == "LONG"):
-						fl = fl + 1
-						#file_name = tmp5[1]
-			i=i+1
-		if (fl == 0):
-			v_para = v_para + arguments
-		if (fl == 1):
-			for inpf in input_files:
-				if inpf!=file_name:
-					f_name = inpf
-			v_para = v_para + f_name
-		o_para = o_para + v_para +" \" "
-		i = i-1
-	if(lines[i].rstrip() == "***OASES***"):
-		i = i+1
-		o_para = o_para + " -p \"" 
-		while(lines[i][0] != "*"):
-			if(lines[i].rstrip() != ""):
-				tmp6 = lines[i].rstrip().split()
-				oa_para = oa_para+" -"+lines[i].rstrip()+" "
-			i=i+1
-		o_para = o_para + oa_para +" \" "
-		i = i-1
-	if(lines[i].rstrip() == "***SALMON INDEX***"):
-		i = i+1
-		while(lines[i][0] != "*"):
-			if(lines[i].rstrip() != ""):
-				tmp3 = lines[i].rstrip().split()
-				para3 = para3 + tmp3[0] + " "
-				if(tmp3[0] == "i"):
-					index_folder = tmp3[1]
-					fold_count = 1
-				sa_index_para = sa_index_para+" -"+lines[i].rstrip()+" "
-			i=i+1
-		i=i-1
-	
-	if(lines[i].rstrip() == "***SALMON QUANT***"):
-		i = i+1
-		while(lines[i][0] != "*"):
-			if(lines[i].rstrip() != ""):
-				tmp4 = lines[i].rstrip().split()
-				para4 = para4 + tmp4[0] + " "
-				if(tmp4[0] == "o"):
-					quant_folder = tmp3[1]
-					quant_count = 1
-				sa_quant_para = sa_quant_para+" -"+lines[i].rstrip()+" "
-			i=i+1
-		i=i-1
-	i=i+1
 os.chdir(n)
 if (not(os.path.exists(pathn+"/logfiles/"))):
 	os.system("mkdir "+pathn+"/logfiles/")
@@ -413,15 +445,19 @@ if(step_number<=3):
 	if(quant_count == 0):
 		quant_output = pathn + "/Salmon_output/pipeline_quant"
 		sa_quant_para = sa_quant_para + " -o " + quant_output
-	sa_quant_para = sa_quant_para + " -i "+index_output+ " -r " +str_input
+	
+	if(cl1.left_name != "None" and cl1.right_name != "None"):
+		sa_quant_para = sa_quant_para + " -i "+index_output+ " -1 "+input_files[0]+" -2 "+input_files[1]+" "
+	else:		
+		sa_quant_para = sa_quant_para + " -i "+index_output+ " -r " +arguments
 	
 	with open(pathn + "/logfiles/commands.txt","a") as command_file:
 		command_file.write(sa_quant_para)
 		command_file.write("\n")
-		
+	
+	print sa_quant_para	
 	os.system(sa_quant_para+" >"+pathn+"/logfiles/Salmon_quant_log.txt 2>stderr.txt")
 	
-
 ### Check Salmon ###
 ffcsa = 0
 ccesa = os.path.exists(quant_output + "/quant.sf")
@@ -443,3 +479,6 @@ os.system("mv " +quant_output+ "/quant.sf Final_Output/")
 os.system("mv " +index_transcripts+ " Final_Output/")
 for i in input_files:
 	os.system("mv " +i+ "_corrected.fa Final_Output/")
+
+
+
