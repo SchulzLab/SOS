@@ -3,7 +3,7 @@ t	tmp
 ***OASES PIPELINE***
 m	21
 M	30
-***VELVET**
+***VELVET***
 ***OASES***
 ***SALMON INDEX***
 k	21

@@ -12,16 +12,15 @@ class pipeline():
 		parser = OptionParser()
 		wd = os.getcwd()
 		parser.add_option('-o', '--output',dest='foldername',help='Output directory', action="store", default=wd)
-
 		parser.add_option('-i', '--input',dest='inputname',help='Single end reads (comma seperated)', action="store")
 		parser.add_option('-l', '--left',dest='left_name',help='Left end reads (comma seperated)', action="store")		
 		parser.add_option('-r', '--right',dest='right_name',help='Right end reads (comma seperated)', action="store")
-		
 		parser.add_option('-t', '--threshold',dest='threshold',help='Threshold value for KREATION (optional)', action="store")
-		parser.add_option('-b', '--base',dest='base',help='Logarithm Base value for file reduction(optional)', action="store")
-		
+		parser.add_option('-b', '--base',dest='base',help='Logarithm Base value for file reduction(optional)', action="store", default="NA")
 		parser.add_option('-c', '--config',dest='config_file',help='Config file (required)', action="store")
 		parser.add_option('-s', '--step',dest='step',help='The step you want start with (1-SEECER(default) 2-OASES 3-Salmon)', action="store", default=1)
+		parser.add_option('-p', '--program', dest='prog', help='Assembly program to be used (Oases or TransABySS)', action="store", default="Oases")
+				
 		(options, args) = parser.parse_args()
 		return options
 	
@@ -332,26 +331,6 @@ while i < len(lines):
 	i=i+1
 
 
-####### Clearing the file ########	
-#base = (cl1.base)
-#red_flag = 0
-#if (base is "None"):
-#	print("Skipping normalization step")
-#else:
-#	if(not(os.path.exists(pathn+"/Normalization_Output"))):
-#		os.system("mkdir "+pathn+"/Normalization_Output")
-#	if cl1.left_name != None and cl1.right_name != None:
-#		red_flag = 1
-#		os.system("ORNA -pair1 "+input_files[0]+" -pair2 "+input_files[1]+" -base "+str(base)+" -output "+pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa -kmer " +mkmer+" >"+pathn+ "/logfiles/Normalization_log.txt 2>&1")			
-#	else:	
-#		red_flag = 1
-#		os.system(">"+pathn+"/Combined."+forma)
-#		for clf in input_files:
-#			os.system("cat "+clf+" >> "+pathn+"/Combined."+forma)	
-#		os.system("ORNA -input "+pathn+"/Combined."+forma+" -base "+str(base)+" -output "+pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa -kmer " +mkmer +" >"+pathn+ "/logfiles/Normalization_log.txt 2>&1")
-#	je_file = pathn+"/Normalization_Output/Combined_"+forma+"_cleared.fa"
-#	input_files = je_file.split(",")	
-	
 for i10 in range(0,len(input_files)):
 	str_input = str_input + input_files[i10] + " "
 	temf = commands.getstatusoutput("readlink -f "+input_files[i10])
@@ -363,11 +342,13 @@ for i10 in range(0,len(input_files)):
 		arguments = arguments + input_files[i10] + " "
 		argu1 = argu1 + input_files[i10] + " "
 
-
-print str_input
-#####Collecting Parameters for each program #########
+#####Collecting Parameters for each program#########
 s_para=cl.obtainseecer(cl1.config_file)
-o_para=cl.obtainoases(cl1.config_file, arguments, pathn)
+if(cl1.base == "NA"):
+	o_para=cl.obtainoases(cl1.config_file, arguments, pathn)
+else:
+	normalized_file = pathn+"/Normalization_Output/Combined_"+forma+"_corrected_cleared.fa"
+	o_para=cl.obtainoases(cl1.config_file, normalized_file, pathn)
 sa_index_para, sa_quant_para=cl.obtainsalmon(cl1.config_file)
 
 os.chdir(n)
@@ -385,7 +366,6 @@ if(step_number==1):
 	if(step_number==1):
 		os.system("bash "+s_para+" >>"+pathn+"/logfiles/seecer_log.txt 2>&1")
 	
-
 ### Check SEECER ###
 if(step_number==1):
 	ffcs = 0
@@ -398,7 +378,26 @@ if(step_number==1):
 		sys.exit()
 	else:
 		print "SEECER executed successfully"
+
+### Clearing the file ####
+if (cl1.base == "NA"):
+	print("Skipping normalization step")
+else:
+	if(not(os.path.exists(pathn+"/Normalization_Output"))):
+		os.system("mkdir "+pathn+"/Normalization_Output")
+	if cl1.left_name != None and cl1.right_name != None:
+		red_flag = 1
+		os.system("ORNA -pair1 "+input_files[0]+"_corrected.fa -pair2 "+input_files[1]+"_corrected.fa -base "+str(cl1.base)+" -output "+pathn+"/Normalization_Output/Combined_"+forma+"_corrected_cleared.fa -kmer " +mkmer+" >"+pathn+ "/logfiles/Normalization_log.txt 2>&1")			
+	else:	
+		red_flag = 1
+		os.system(">"+pathn+"/Combined."+forma)
 		
+		for clf in input_files:
+			clf=clf+"_corrected.fa"
+			os.system("cat "+clf+" >> "+pathn+"/Combined."+forma)	
+		os.system("ORNA -input "+pathn+"/Combined."+forma+" -base "+str(cl1.base)+" -output "+pathn+"/Normalization_Output/Combined_"+forma+"_corrected_cleared.fa -kmer " +mkmer +" >"+pathn+ "/logfiles/Normalization_log.txt 2>&1")
+	je_file = pathn+"/Normalization_Output/Combined_"+forma+"_corrected_cleared.fa"
+	input_files = je_file.split(",")	
 
 ### OASES PIPELINE execution ###
 with open(pathn + "/logfiles/commands.txt","a") as command_file:
@@ -447,7 +446,7 @@ if(step_number<=3):
 		quant_output = pathn + "/Salmon_output/pipeline_quant"
 		sa_quant_para = sa_quant_para + " -o " + quant_output
 	
-	if(cl1.left_name != "None" and cl1.right_name != "None"):
+	if(cl1.left_name != None and cl1.right_name != None):
 		sa_quant_para = sa_quant_para + " -i "+index_output+ " -1 "+input_files[0]+" -2 "+input_files[1]+" "
 	else:		
 		sa_quant_para = sa_quant_para + " -i "+index_output+ " -r " +arguments
@@ -478,8 +477,14 @@ if(not(os.path.exists("Final_Output"))):
 
 os.system("mv " +quant_output+ "/quant.sf Final_Output/")
 os.system("mv " +index_transcripts+ " Final_Output/")
-for i in input_files:
-	os.system("mv " +i+ "_corrected.fa Final_Output/")
+if(cl1.base == None):
+	for i in input_files:
+		os.system("mv " +i+ "_corrected.fa Final_Output/")
+else:
+	input_files = arguments.split(" ")
+	input_files.pop()
+	for i in input_files:
+		os.system("mv " +i+ " Final_Output/")
 
 
 
