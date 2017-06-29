@@ -24,6 +24,7 @@ class pipeline():
 		(options, args) = parser.parse_args()
 		return options
 	
+	
 	def checkprogram(self, program):
 		output1 = commands.getstatusoutput("which "+program)
 		cnt = 1
