@@ -204,9 +204,9 @@ class pipeline():
 	def getkmer(self, prog, config_file):
 		input_file = open(config_file)
 		lines = input_file.readlines()
-		mkmer="21"
 		if(prog.upper()=="OASES"):
 			i=0
+			mkmer="19"	
 			while i < len(lines):
 				if(lines[i].rstrip() == "***OASES PIPELINE***"):
 					i = i+1
@@ -217,17 +217,21 @@ class pipeline():
 						i=i+1
 				i=i+1
 		
-		if(prog.upper()=="TRANSABYSS"):
+		elif(prog.upper()=="TRANSABYSS"):
 			i=0
+			mkmer="32"		
 			while i < len(lines):
 				if(lines[i].rstrip() == "***TRANSABYSS***"):
 					i = i+1
 					while(lines[i][0] != "*"):
-						if(lines[i][0] == "m"):
+						if(lines[i][0] == "k"):
 							tmp3 = lines[i].rstrip().split()
 							mkmer = tmp3[-1]
 						i=i+1
 				i=i+1
+		else:
+			print("Couldnt find the program "+prog+". Please the check the parameter")
+			sys.exit()
 		input_file.close()
 		return mkmer
 
@@ -369,7 +373,6 @@ quant_folder = "Salmon_output/pipeline_quant"
 quant_count = 0
 
 mkmer = cl.getkmer(cl1.prog.upper(), conf)
-
 for i10 in range(0,len(input_files)):
 	str_input = str_input + input_files[i10] + " "
 	temf = commands.getstatusoutput("readlink -f "+input_files[i10])
@@ -402,9 +405,6 @@ else:                                              ##TRANSABYSS PARAMETERS
   
 sa_index_para, sa_quant_para=cl.obtainsalmon(cl1.config_file)   ##SALMON PARAMETERS
 
-print t_para
-
-
 os.chdir(n)
 if (not(os.path.exists(pathn+"/logfiles/"))):
 	os.system("mkdir "+pathn+"/logfiles/")
@@ -433,7 +433,6 @@ if(step_number==1):
 	else:
 		print "SEECER executed successfully"
 
-'''
 ### Clearing the file ####
 if (cl1.base == "NA"):
 	print("Skipping normalization step")
@@ -454,31 +453,36 @@ else:
 	je_file = pathn+"/Normalization_Output/Combined_"+forma+"_corrected_cleared.fa"
 	input_files = je_file.split(",")	
 
+
+if(cl1.prog.upper()=="OASES"):
 ### OASES PIPELINE execution ###
-with open(pathn + "/logfiles/commands.txt","a") as command_file:
-	command_file.write(o_para)
-	command_file.write("\n")
+	with open(pathn + "/logfiles/commands.txt","a") as command_file:
+		command_file.write(o_para)
+		command_file.write("\n")
 	
-os.chdir(pathn)
-if (step_number<=2):
-	try:
-		os.system(o_para+" >"+pathn+"/logfiles/oases_log.txt 2>&1")
-	except:
+	os.chdir(pathn)
+	if (step_number<=2):
+		try:
+			os.system(o_para+" >"+pathn+"/logfiles/oases_log.txt 2>&1")
+		except:
+			sys.exit()
+
+
+	### Check oases ###
+	ffco = 0
+	cceo = os.path.exists(pathn + "/OasesPipelineMerged/transcripts.fa")
+	if cceo == False:
+		ffco = 1
+	if ffco == 1:
+		print "OASES did not run properly. Please see the log files and try again"
 		sys.exit()
-
-
-### Check oases ###
-ffco = 0
-cceo = os.path.exists(pathn + "/OasesPipelineMerged/transcripts.fa")
-if cceo == False:
-	ffco = 1
-if ffco == 1:
-	print "OASES did not run properly. Please see the log files and try again"
-	sys.exit()
+	else:
+		print "OASES executed successfully"
 else:
-	print "OASES executed successfully"
+	
 
 
+'''
 ### Salmon execution ###
 if(not(os.path.exists("Salmon_output"))):
 	os.system("mkdir Salmon_output")
