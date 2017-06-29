@@ -47,6 +47,12 @@ class pipeline():
 			if(output1[1]==""):
 				print "Salmon not found in the path variable. Please set the path variable to the Salmon bin folder"
 				cnt = 0
+
+		if "transabyss" in program:		
+			output1=list(output1)
+			if(output1[1]==""):
+				print "Transabyss not found in the path variable. Please set the path variable to the oases folder"
+				cnt = 0
 		
 		return cnt
 
@@ -107,11 +113,9 @@ class pipeline():
 				while(lines[i][0] != "*"):
 					if(lines[i].rstrip() != ""):
 						tmp5 = lines[i].rstrip().split("	")
-						#para5 = para5 + tmp5[0] + " "
 						v_para = v_para+" -"+tmp5[0]+" "+tmp5[1]+" "
 						if (lines[i].rstrip().upper() == "SHORT" or lines[i].rstrip().upper() == "SHORT2" or lines[i].rstrip().upper() == "LONG"):
 							fl = fl + 1
-						#file_name = tmp5[1]
 					i=i+1
 				if (fl == 0):
 					v_para = v_para + arguments
@@ -136,6 +140,30 @@ class pipeline():
 		
 		o_para = o_para + "-o /"+output+"/OasesPipeline"
 		return o_para
+
+	def obtaintransabyss(self, config_file, arguments, output, parameter):
+		input_file = open(config_file)
+		lines = input_file.readlines()		
+		f1 = os.popen('which transabyss')
+		n1 = f1.read().rstrip()
+		t_para = n1+" "
+		i=0
+		if(not(os.path.exists(output+"/Assembly/"))):
+			os.system("mkdir "+output+"/Assembly/")
+		while i < len(lines):
+			if(lines[i].rstrip().upper() == "***TRANSABYSS***"):
+				i = i+1
+				while(lines[i][0] != "*"):
+					if(lines[i][0] == "k"):
+						tmp3 = lines[i].rstrip().split("	")
+						mkmer = tmp3[-1]
+					if(lines[i].rstrip() != ""):
+						tmp2 = lines[i].rstrip().split("	")
+						t_para = t_para+" -"+tmp2[0]+" "+tmp2[1]+" "
+					i=i+1		
+			i=i+1
+		t_para = t_para + ""+parameter+ " "+arguments+" --name "+output+"/Assembly/transcripts"
+		return t_para			
 
 	def obtainsalmon(self, config_file):
 		input_file = open(config_file)
@@ -169,21 +197,59 @@ class pipeline():
 					i=i+1
 				i=i-1
 			i=i+1
+		input_file.close()
 		return sa_index_para, sa_quant_para
+
+
+	def getkmer(self, prog, config_file):
+		input_file = open(config_file)
+		lines = input_file.readlines()
+		mkmer="21"
+		if(prog.upper()=="OASES"):
+			i=0
+			while i < len(lines):
+				if(lines[i].rstrip() == "***OASES PIPELINE***"):
+					i = i+1
+					while(lines[i][0] != "*"):
+						if(lines[i][0] == "m"):
+							tmp3 = lines[i].rstrip().split()
+							mkmer = tmp3[-1]
+						i=i+1
+				i=i+1
+		
+		if(prog.upper()=="TRANSABYSS"):
+			i=0
+			while i < len(lines):
+				if(lines[i].rstrip() == "***TRANSABYSS***"):
+					i = i+1
+					while(lines[i][0] != "*"):
+						if(lines[i][0] == "m"):
+							tmp3 = lines[i].rstrip().split()
+							mkmer = tmp3[-1]
+						i=i+1
+				i=i+1
+		input_file.close()
+		return mkmer
+
+
 		
 ############### Main Program ###################
 output_fil=""
 cl = pipeline()
-cnt = cl.checkprogram("oases")
-cnt = cl.checkprogram("velvetg")
-cnt = cl.checkprogram("velveth")
+cl1 = cl.getoptions()
+
+if(cl1.prog.upper() == "OASES"):
+	cnt = cl.checkprogram("oases")
+	cnt = cl.checkprogram("velvetg")
+	cnt = cl.checkprogram("velveth")
+else:
+	cnt = cl.checkprogram("transabyss")
+
 cnt = cl.checkprogram("run_seecer.sh")
 cnt = cl.checkprogram("salmon")
 
 if cnt == 0:
 	sys.exit()
-
-cl1 = cl.getoptions()
 if (cl1.foldername != None):
 	if "/" not in cl1.foldername:
 		a_pathn = os.getcwd() + "/" + cl1.foldername + "/"
@@ -193,7 +259,7 @@ pathn = os.path.realpath(a_pathn)
 
 if(not(os.path.exists(pathn))):
 	os.system("mkdir "+pathn)
-
+###Checking for the paired end files ####
 if cl1.left_name == None and cl1.right_name !=None:
 	print "Missing one end"
 	sys.exit()
@@ -269,18 +335,11 @@ if "//" in n:
 else:
 	n = n.replace("bin/run_seecer.sh", "")
 
-f1 = os.popen('which oases')
-n1 = f1.read().rstrip()
-if "//" in n1:
-	n1 = n1.replace("/oases//oases", "/oases/scripts/oases_pipeline.py")
-else:
-	n1 = n1.replace("/oases/oases", "/oases/scripts/oases_pipeline.py")
-
 conf = cl1.config_file
 
 input_file = open(conf)
 lines = input_file.readlines()
-pathname1 = os.path.abspath(sys.argv[0]).replace("pipeline.py", "")
+pathname1 = os.path.abspath(sys.argv[0]).replace("SOS.py", "")
 
 if (cl1.foldername != None):
 	if "/" not in cl1.foldername:
@@ -288,11 +347,12 @@ if (cl1.foldername != None):
 	else:
 		pathname = cl1.foldername + "/"
 else:
-	pathname = os.path.abspath(sys.argv[0]).replace("pipeline_1.py", "")
+	pathname = os.path.abspath(sys.argv[0]).replace("SOS.py", "")
 
 input_file.close()
 step_number = 0
 cond = "true"
+
 ######## Obtain the step number #########
 
 step_number=int(cl1.step)
@@ -301,35 +361,14 @@ if step_number==0:
 	sys.exit()
 
 i=0
-o_para = "python " +n1
-v_para = ""
-oa_para = ""
 str_input = ""
-sa_index_para = "salmon index "
-sa_quant_para = "salmon quant "
-para1 = ""
-para2 = ""
-para3 = ""
-para4 = ""
-para5 = ""
-para6 = ""
-argu1 = ""
 arguments = ""
 index_folder = "Salmon_output/pipeline_index"
 fold_count = 0
 quant_folder = "Salmon_output/pipeline_quant"
 quant_count = 0
 
-while i < len(lines):
-	if(lines[i].rstrip() == "***OASES PIPELINE***"):
-		i = i+1
-		while(lines[i][0] != "*"):
-			if(lines[i][0] == "m"):
-				tmp3 = lines[i].rstrip().split()
-				mkmer = tmp3[-1]
-			i=i+1
-	i=i+1
-
+mkmer = cl.getkmer(cl1.prog.upper(), conf)
 
 for i10 in range(0,len(input_files)):
 	str_input = str_input + input_files[i10] + " "
@@ -337,19 +376,34 @@ for i10 in range(0,len(input_files)):
 	input_files[i10] = temf[1]
 	if (step_number == 1):
 		arguments = arguments + input_files[i10] + "_corrected.fa" + " "
-		argu1 = argu1 + input_files[i10] + " "
 	else:
 		arguments = arguments + input_files[i10] + " "
-		argu1 = argu1 + input_files[i10] + " "
-
+	
 #####Collecting Parameters for each program#########
-s_para=cl.obtainseecer(cl1.config_file)
-if(cl1.base == "NA"):
-	o_para=cl.obtainoases(cl1.config_file, arguments, pathn)
-else:
-	normalized_file = pathn+"/Normalization_Output/Combined_"+forma+"_corrected_cleared.fa"
-	o_para=cl.obtainoases(cl1.config_file, normalized_file, pathn)
-sa_index_para, sa_quant_para=cl.obtainsalmon(cl1.config_file)
+s_para=cl.obtainseecer(cl1.config_file)    ##SEECER PARAMETERS
+normalized_file = pathn+"/Normalization_Output/Combined_"+forma+"_corrected_cleared.fa"
+		
+if(cl1.prog=="OASES"):
+	if(cl1.base == "NA"):                      ##OASES PARAMETERS
+		o_para=cl.obtainoases(cl1.config_file, arguments, pathn)
+	else:
+		o_para=cl.obtainoases(cl1.config_file, normalized_file, pathn)
+else:                                              ##TRANSABYSS PARAMETERS
+	if(cl1.left_name != None and cl1.right_name != None):
+		if(cl1.base != None):
+			t_para=cl.obtaintransabyss(cl1.config_file, normalized_file, pathn, "--pe")
+		else:	
+			t_para=cl.obtaintransabyss(cl1.config_file, arguments, pathn, "--pe")
+	else:
+		if(cl1.base != None):
+			t_para=cl.obtaintransabyss(cl1.config_file, normalized_file, pathn, "--se")
+		else:	
+			t_para=cl.obtaintransabyss(cl1.config_file, arguments, pathn, "--se")
+  
+sa_index_para, sa_quant_para=cl.obtainsalmon(cl1.config_file)   ##SALMON PARAMETERS
+
+print t_para
+
 
 os.chdir(n)
 if (not(os.path.exists(pathn+"/logfiles/"))):
@@ -379,6 +433,7 @@ if(step_number==1):
 	else:
 		print "SEECER executed successfully"
 
+'''
 ### Clearing the file ####
 if (cl1.base == "NA"):
 	print("Skipping normalization step")
@@ -486,5 +541,5 @@ else:
 	for i in input_files:
 		os.system("mv " +i+ " Final_Output/")
 
-
+'''
 

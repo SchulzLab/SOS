@@ -275,6 +275,9 @@ while i < len(lines):
 	if(lines[i].rstrip() == "***VELVET***"):
 		i = i+1
 		fl = 0
+		command_file.write("\n")
+	if(step_number==1):
+		os.system("bash "+s_para+" >>"+pathn+"/logfiles/seecer_log.txt 2>&1")
 		file_name=""
 		f_name=""
 		o_para = o_para + " -d \""
