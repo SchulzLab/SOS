@@ -88,7 +88,10 @@ class pipeline():
 		o_para = "python " +n1
 		v_para = ""
 		oa_para = ""
-	
+		velvet_para="-d \""	
+		oases_para="-p \""
+		pipeline_para = ""
+		kreation_para = ""
 		i=0
 		while i < len(lines):
 			if(lines[i].rstrip() == "***OASES PIPELINE***"):
@@ -101,6 +104,7 @@ class pipeline():
 						tmp2 = lines[i].rstrip().split("	")
 						#para2 = para2 + tmp2[0] + " "
 						o_para = o_para+" -"+tmp2[0]+" "+tmp2[1]+" "
+						pipeline_para = tmp2[0]+" "+tmp2[1]+" "
 					i=i+1
 
 
@@ -124,6 +128,7 @@ class pipeline():
 						if inpf!=file_name:
 							f_name = inpf
 					v_para = v_para + f_name
+				velvet_para = velvet_para + v_para+"\""
 				o_para = o_para + v_para +" \" "
 				i = i-1
 			if(lines[i].rstrip() == "***OASES***"):
@@ -134,12 +139,15 @@ class pipeline():
 						tmp6 = lines[i].rstrip().split("	")
 						oa_para = oa_para+" -"+tmp6[0]+" "+tmp6[1]+" "
 					i=i+1
+				oases_para = oases_para + oa_para + "\""
 				o_para = o_para + oa_para +" \" "
 				i = i-1
 			i=i+1
 		
 		o_para = o_para + "-o /"+output+"/OasesPipeline"
-		return o_para
+		kreation_para = pipeline_para + " "+velvet_para+" "+oases_para
+				
+		return o_para, kreation_para
 
 	def obtaintransabyss(self, config_file, arguments, output, parameter):
 		input_file = open(config_file)
@@ -148,8 +156,6 @@ class pipeline():
 		n1 = f1.read().rstrip()
 		t_para = n1+" "
 		i=0
-		if(not(os.path.exists(output+"/Assembly/"))):
-			os.system("mkdir "+output+"/Assembly/")
 		while i < len(lines):
 			if(lines[i].rstrip().upper() == "***TRANSABYSS***"):
 				i = i+1
@@ -162,7 +168,7 @@ class pipeline():
 						t_para = t_para+" -"+tmp2[0]+" "+tmp2[1]+" "
 					i=i+1		
 			i=i+1
-		t_para = t_para + ""+parameter+ " "+arguments+" --name "+output+"/Assembly/transcripts"
+		t_para = t_para + ""+parameter+ " "+arguments+" --name "+output+"/transcripts"
 		return t_para			
 
 	def obtainsalmon(self, config_file):
@@ -235,7 +241,16 @@ class pipeline():
 		input_file.close()
 		return mkmer
 
-
+	def getReadLength(self. readfile):
+		i=0;
+		length=0
+		with open(readfile, 'r') as f:
+			if(i==1):
+				length = len(f.readline())
+				break
+			i=i+1
+		return length
+		
 		
 ############### Main Program ###################
 output_fil=""
@@ -382,15 +397,16 @@ for i10 in range(0,len(input_files)):
 	else:
 		arguments = arguments + input_files[i10] + " "
 	
+
 #####Collecting Parameters for each program#########
 s_para=cl.obtainseecer(cl1.config_file)    ##SEECER PARAMETERS
 normalized_file = pathn+"/Normalization_Output/Combined_"+forma+"_corrected_cleared.fa"
 		
 if(cl1.prog=="OASES"):
 	if(cl1.base == "NA"):                      ##OASES PARAMETERS
-		o_para=cl.obtainoases(cl1.config_file, arguments, pathn)
+		o_para, kreation_para=cl.obtainoases(cl1.config_file, arguments, pathn)
 	else:
-		o_para=cl.obtainoases(cl1.config_file, normalized_file, pathn)
+		o_para, kreation_para=cl.obtainoases(cl1.config_file, normalized_file, pathn)
 else:                                              ##TRANSABYSS PARAMETERS
 	if(cl1.left_name != None and cl1.right_name != None):
 		if(cl1.base != None):
@@ -453,36 +469,60 @@ else:
 	je_file = pathn+"/Normalization_Output/Combined_"+forma+"_corrected_cleared.fa"
 	input_files = je_file.split(",")	
 
-
-if(cl1.prog.upper()=="OASES"):
-### OASES PIPELINE execution ###
-	with open(pathn + "/logfiles/commands.txt","a") as command_file:
-		command_file.write(o_para)
-		command_file.write("\n")
-	
-	os.chdir(pathn)
-	if (step_number<=2):
-		try:
-			os.system(o_para+" >"+pathn+"/logfiles/oases_log.txt 2>&1")
-		except:
-			sys.exit()
-
-
-	### Check oases ###
-	ffco = 0
-	cceo = os.path.exists(pathn + "/OasesPipelineMerged/transcripts.fa")
-	if cceo == False:
-		ffco = 1
-	if ffco == 1:
-		print "OASES did not run properly. Please see the log files and try again"
-		sys.exit()
-	else:
-		print "OASES executed successfully"
+###Assembly execution ###
+assembly_program = cl1.prog
+if(cl1.threshold != None):
+	os.system("python "+pathname+"/KREATION.py -p "+cl1.prog+" -s 2 -o "+pathn+" -r "+str(cl.getReadLength(input_files[0]))+" -t "+str(cl1.threshold)+" -k "+mkmer)       ####### KREATION EXECUTION 
 else:
+	if(cl1.prog.upper()=="OASES"):
+		with open(pathn + "/logfiles/commands.txt","a") as command_file:
+			command_file.write(o_para)
+			command_file.write("\n")
+	
+		os.chdir(pathn)
+		if (step_number<=2):
+			try:
+				os.system(o_para+" >"+pathn+"/logfiles/oases_log.txt 2>&1")
+			except:
+				sys.exit()
+
+
+		### Check oases ###
+		ffco = 0
+		cceo = os.path.exists(pathn + "/OasesPipelineMerged/transcripts.fa")
+		if cceo == False:
+			ffco = 1
+		if ffco == 1:
+			print "OASES did not run properly. Please see the log files and try again"
+			sys.exit()
+		else:
+			print "OASES executed successfully"
+	else:
+		with open(pathn + "/logfiles/commands.txt","a") as command_file:
+			command_file.write(o_para)
+			command_file.write("\n")
+		os.chdir(pathn)
+		if (step_number<=2):
+			try:
+				os.system(t_para+" >"+pathn+"/logfiles/transabyss_log.txt 2>&1")
+			except:
+				sys.exit()
+	
+		### Check transabyss ###
+		ffco = 0
+		cceo = os.path.exists(pathn + "/transcripts-final.fa")
+		if cceo == False:
+			ffco = 1
+		if ffco == 1:
+			print "OASES did not run properly. Please see the log files and try again"
+			sys.exit()
+		else:
+			print "TRANSABYSS executed successfully"
+			os.system("mv "+pathn+"/transcripts-final.fa "+pathn+"/transcripts.fa")
 	
 
 
-'''
+
 ### Salmon execution ###
 if(not(os.path.exists("Salmon_output"))):
 	os.system("mkdir Salmon_output")
@@ -491,8 +531,12 @@ if(step_number<=3):
 	if (fold_count == 0):
 		index_output = pathn + "/Salmon_output/pipeline_index"
 		sa_index_para = sa_index_para + " -i " + index_output
-
-	index_transcripts = pathn + "/OasesPipelineMerged/transcripts.fa"
+	
+	if(cl1.prog.upper()=="OASES"):
+		index_transcripts = pathn + "/OasesPipelineMerged/transcripts.fa"
+	else:
+		index_transcripts = pathn + "/transcripts.fa"
+	
 	sa_index_para = sa_index_para + " -t "+index_transcripts+ "" 
 
 	with open(pathn + "/logfiles/commands.txt","a") as command_file:
@@ -516,7 +560,8 @@ if(step_number<=3):
 	
 	print sa_quant_para	
 	os.system(sa_quant_para+" >"+pathn+"/logfiles/Salmon_quant_log.txt 2>stderr.txt")
-	
+
+
 ### Check Salmon ###
 ffcsa = 0
 ccesa = os.path.exists(quant_output + "/quant.sf")
@@ -529,10 +574,19 @@ else:
 	print "Salmon executed successfully"
 
 
+
+
+
+
 ######## Collecting Outputs ###########
 os.chdir(pathn)
 if(not(os.path.exists("Final_Output"))):
 	os.system("mkdir Final_Output")
+
+if(cl1.prog=="OASES"):
+	os.system("mv "+pathn + "/OasesPipelineMerged/transcripts.fa Final_Output/")
+else:
+	os.system("mv "+pathn + "/transcripts.fa Final_Output/")
 
 os.system("mv " +quant_output+ "/quant.sf Final_Output/")
 os.system("mv " +index_transcripts+ " Final_Output/")
@@ -545,5 +599,4 @@ else:
 	for i in input_files:
 		os.system("mv " +i+ " Final_Output/")
 
-'''
 
