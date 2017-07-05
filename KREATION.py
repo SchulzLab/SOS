@@ -18,7 +18,8 @@ class pipeline():
 		parser.add_option('-o', '--output',dest='out',help='path to the output directory, directory will be created if non-existent', action="store",default=cuwodi)
 		parser.add_option('-r', '--read',dest='read_length',help='read length (required)', action="store")
 		parser.add_option('-t', '--threshold',dest='cut_off',help='cut_off for d_score', action="store",default=0.01)		
-		parser.add_option('-k', '--kmer',dest='kmer',help='Minimum Kmer to be used', action="store", default="21")		
+		parser.add_option('-k', '--kmer',dest='kmer',help='Minimum Kmer to be used', action="store", default="21")	
+		parser.add_option('-a', '--parameter',dest='kparam',help='Minimum Kmer Parameter to be used', action="store", default="m")	
 		(options, args) = parser.parse_args()
 		return options
 
@@ -27,7 +28,7 @@ cwd = os.path.dirname(kr)
 cl = pipeline()
 cl1 = cl.getoptions()
 threshold=float(cl1.cut_off)
-conf = os.path.abspath(cl1.config_file)
+#conf = os.path.abspath(cl1.config_file)par
 output = cl1.out
 output = os.path.abspath(output) 
 rl=int(cl1.read_length)
@@ -49,33 +50,39 @@ pval=0
 #	if(count==0):
 program_name = cl1.prog
 program_name = program_name.replace("\n","")
+if(program_name.upper() == "OASES"):
+	program_name = "oases_pipeline_2.py"
 pn = program_name.split(".")
 pnn = pn[0]
 filename="transcripts.fa"
 min_k=int(cl1.kmer)
 rest_command=cl1.rest
-
+para_min_k = "-"+cl1.kparam
 i = min_k
 os.system("mkdir "+output+"/KREATION/")	
 f=open(""+output+"/KREATION/p_value.txt","a")
+
 while i <= rl:
 	output2=output1+"/"+str(i)+"/"
-	os.system("mkdir "+output2)	
+	if(not(os.path.exists(output2))):	
+		os.system("mkdir "+output2)	
 	os.chdir(output2)
-	os.system("mkdir "+output+"/Cluster/"+str(i)+"/")
-	os.system("mkdir "+output+"/Cluster/Combined/")
+	if(not(os.path.exists(output+"/Cluster/"+str(i)))):	
+		os.system("mkdir "+output+"/Cluster/"+str(i)+"/")
+	if(not(os.path.exists(output+"/Cluster/Combined"))):
+		os.system("mkdir "+output+"/Cluster/Combined/")
 	command = program_name + " " + para_min_k + " " +str(i)+ " " +rest_command	
 	os.system(command)
 	status, ts=commands.getstatusoutput("find "+output2.strip()+" -name "+filename.strip())
 	dirname = os.path.dirname(ts)
 	ts1=ts.replace(str(filename.strip()),str(i)+"_transcripts_org.fa")
 	os.system("mv "+ts+" "+ts1)
-	cmd_rn = "perl "+cwd+"/src/rename_sequence.pl "+ts1+" "+str(i)+""	
+	cmd_rn = "perl "+cwd+"/Utils/rename_sequence.pl "+ts1+" "+str(i)+""	
 	os.system(cmd_rn)
 	os.system("cd-hit-est -i "+dirname+"/"+str(i)+"_transcripts_org_clu.fa -o "+output+"/Cluster/"+str(i)+"/transcripts_clust.fa -c 0.99 -M 2000M -T 10 >> "+output+"/Cluster/"+str(i)+"/transcripts_clust.log")
-	os.system("perl "+cwd+"/src/Combine_files.pl "+output+" "+str(min_k)+" "+str(i)+" "+str(cl1.ss))
+	os.system("perl "+cwd+"/Utils/Combine_files.pl "+output+" "+str(min_k)+" "+str(i)+" "+str(cl1.ss))
 	os.system("cd-hit-est -i "+output+"/Cluster/Combined/combine.fa -o "+output+"/Cluster/Combined/combined_clust.fa -c 0.99 -M 2000M -T 10 >> "+output+"/Cluster/Combined/combined_clust_"+str(i)+".log")
-	s,t = commands.getstatusoutput("perl "+cwd+"/src/calculate_extended.pl "+output+"/Cluster/Combined/combined_clust.fa "+str(min_k)+" "+str(i)+" "+str(cl1.ss))
+	s,t = commands.getstatusoutput("perl "+cwd+"/Utils/calculate_extended.pl "+output+"/Cluster/Combined/combined_clust.fa "+str(min_k)+" "+str(i)+" "+str(cl1.ss))
 	ex=t.split("\t")
 		
 	if int(ex[-1]) != 0 or ex[-1]=="NaN":
@@ -84,7 +91,7 @@ while i <= rl:
 			#ex[-1]=float(math.log(ex[-1]))
 			extended=extended+","+str((ex[-1]))
 		else:
-			#ex[-1]=float(math.log(ex[-1]))
+			#ex[-1]=float(math.'''log(ex[-1]))
 			extended=ex[-1]
 				
 		if kmer !="":
@@ -92,7 +99,7 @@ while i <= rl:
 		else:
 			kmer=str(i)	
 	if cnt > 3:	
-		s1,t1 = commands.getstatusoutput("Rscript "+cwd+"/src/RegressionKMerSelection.R "+kmer+" "+extended)
+		s1,t1 = commands.getstatusoutput("Rscript "+cwd+"/Utils/RegressionKMerSelection.R "+kmer+" "+extended)
 		temp=((t1.split("\n"))[-1]).split(" ");
 		f.write(str(i)+"	"+str(temp[-1])+"	"+str(ex[-1])+"\n");
 		if temp[-1].strip() != "NaN":		
@@ -106,5 +113,6 @@ while i <= rl:
 	else:
 		f.write(str(i)+"	0"+"	"+str(ex[-1])+"\n")
 	i=i+int(cl1.ss)
-os.system("mv "+output+"/Cluster/Combined/combine_p.fa "+output+"/transcripts.fa")
-		
+
+os.system("mv "+output+"/Cluster/Combined/combine_clust.fa "+output+"/transcripts.fa")
+	

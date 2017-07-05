@@ -91,7 +91,6 @@ class pipeline():
 		velvet_para="-d \""	
 		oases_para="-p \""
 		pipeline_para = ""
-		kreation_para = ""
 		i=0
 		while i < len(lines):
 			if(lines[i].rstrip() == "***OASES PIPELINE***"):
@@ -116,8 +115,11 @@ class pipeline():
 				o_para = o_para + " -d \""
 				while(lines[i][0] != "*"):
 					if(lines[i].rstrip() != ""):
-						tmp5 = lines[i].rstrip().split("	")
-						v_para = v_para+" -"+tmp5[0]+" "+tmp5[1]+" "
+						if(lines[i].rstrip().upper() == "SHORT" or lines[i].rstrip().upper() == "SHORT" or lines[i].rstrip().upper() == "SHORT2" or lines[i].rstrip().upper() == "LONG" or lines[i].rstrip().upper() == "SHORTPAIRED" or lines[i].rstrip().upper() == "INTERLEAVED"):
+							v_para = v_para+" -"+lines[i].rstrip()
+						else:
+							tmp5 = lines[i].rstrip().split("	")
+							v_para = v_para+" -"+tmp5[0]+" "+tmp5[1]+" "
 						if (lines[i].rstrip().upper() == "SHORT" or lines[i].rstrip().upper() == "SHORT2" or lines[i].rstrip().upper() == "LONG"):
 							fl = fl + 1
 					i=i+1
@@ -145,9 +147,63 @@ class pipeline():
 			i=i+1
 		
 		o_para = o_para + "-o /"+output+"/OasesPipeline"
+		return o_para
+
+	def obtainkreation(self, config_file, arguments, output):
+		input_file = open(config_file)
+		lines = input_file.readlines()		
+		f1 = os.popen('which oases')
+		n1 = f1.read().rstrip()
+		if "//" in n1:
+			n1 = n1.replace("/oases//oases", "/oases/scripts/oases_pipeline.py")
+		else:
+			n1 = n1.replace("/oases/oases", "/oases/scripts/oases_pipeline.py")
+		o_para = "python " +n1
+		v_para = ""
+		oa_para = ""
+		velvet_para="-d \\\""	
+		oases_para="-p \\\""
+		pipeline_para = ""
+		kreation_para = ""
+		i=0
+		while i < len(lines):
+			if(lines[i].rstrip() == "***VELVET***"):
+				i = i+1
+				fl = 0
+				file_name=""
+				f_name=""
+				while(lines[i][0] != "*"):
+					if(lines[i].rstrip() != ""):
+						if(lines[i].rstrip().upper() == "SHORT" or lines[i].rstrip().upper() == "SHORT" or lines[i].rstrip().upper() == "SHORT2" or lines[i].rstrip().upper() == "LONG" or lines[i].rstrip().upper() == "SHORTPAIRED" or lines[i].rstrip().upper() == "INTERLEAVED"):
+							v_para = v_para+" -"+lines[i].rstrip()+" "
+						else:
+							tmp5 = lines[i].rstrip().split("	")
+							v_para = v_para+" -"+tmp5[0]+" "+tmp5[1]+" "
+						if (lines[i].rstrip().upper() == "SHORT" or lines[i].rstrip().upper() == "SHORT2" or lines[i].rstrip().upper() == "LONG"):
+							fl = fl + 1
+					i=i+1
+				if (fl == 0):
+					v_para = v_para + arguments
+				if (fl == 1):
+					for inpf in input_files:
+						if inpf!=file_name:
+							f_name = inpf
+					v_para = v_para + f_name
+				velvet_para = velvet_para + v_para+"\\\""
+				i = i-1
+			if(lines[i].rstrip() == "***OASES***"):
+				i = i+1
+				while(lines[i][0] != "*"):
+					if(lines[i].rstrip() != ""):
+						tmp6 = lines[i].rstrip().split("	")
+						oa_para = oa_para+" -"+tmp6[0]+" "+tmp6[1]+" "
+					i=i+1
+				oases_para = oases_para + oa_para + "\\\""
+				i = i-1
+			i=i+1
+		
 		kreation_para = pipeline_para + " "+velvet_para+" "+oases_para
-				
-		return o_para, kreation_para
+		return kreation_para
 
 	def obtaintransabyss(self, config_file, arguments, output, parameter):
 		input_file = open(config_file)
@@ -222,7 +278,6 @@ class pipeline():
 							mkmer = tmp3[-1]
 						i=i+1
 				i=i+1
-		
 		elif(prog.upper()=="TRANSABYSS"):
 			i=0
 			mkmer="32"		
@@ -241,15 +296,15 @@ class pipeline():
 		input_file.close()
 		return mkmer
 
-	def getReadLength(self. readfile):
+	def getReadLength(self, readfile):
 		i=0;
 		length=0
 		with open(readfile, 'r') as f:
-			if(i==1):
-				length = len(f.readline())
-				break
-			i=i+1
-		return length
+			for i, line in enumerate(f):
+        			if i == 1:
+					length = len(str(line))
+					break
+       		return length
 		
 		
 ############### Main Program ###################
@@ -386,6 +441,7 @@ index_folder = "Salmon_output/pipeline_index"
 fold_count = 0
 quant_folder = "Salmon_output/pipeline_quant"
 quant_count = 0
+kreation_para=""
 
 mkmer = cl.getkmer(cl1.prog.upper(), conf)
 for i10 in range(0,len(input_files)):
@@ -402,11 +458,13 @@ for i10 in range(0,len(input_files)):
 s_para=cl.obtainseecer(cl1.config_file)    ##SEECER PARAMETERS
 normalized_file = pathn+"/Normalization_Output/Combined_"+forma+"_corrected_cleared.fa"
 		
-if(cl1.prog=="OASES"):
+if(cl1.prog.upper()=="OASES"):
 	if(cl1.base == "NA"):                      ##OASES PARAMETERS
-		o_para, kreation_para=cl.obtainoases(cl1.config_file, arguments, pathn)
+		o_para=cl.obtainoases(cl1.config_file, arguments, pathn)
+		kreation_para=cl.obtainkreation(cl1.config_file, arguments, pathn)
 	else:
-		o_para, kreation_para=cl.obtainoases(cl1.config_file, normalized_file, pathn)
+		o_para=cl.obtainoases(cl1.config_file, normalized_file, pathn)
+		kreation_para=cl.obtainkreation(cl1.config_file, normalized_file, pathn)
 else:                                              ##TRANSABYSS PARAMETERS
 	if(cl1.left_name != None and cl1.right_name != None):
 		if(cl1.base != None):
@@ -433,7 +491,7 @@ if(step_number==1):
 	with open(pathn + "/logfiles/commands.txt","a") as command_file:
 		command_file.write(s_para)
 		command_file.write("\n")
-	if(step_number==1):
+	#if(step_number==1):
 		os.system("bash "+s_para+" >>"+pathn+"/logfiles/seecer_log.txt 2>&1")
 	
 ### Check SEECER ###
@@ -472,7 +530,13 @@ else:
 ###Assembly execution ###
 assembly_program = cl1.prog
 if(cl1.threshold != None):
-	os.system("python "+pathname+"/KREATION.py -p "+cl1.prog+" -s 2 -o "+pathn+" -r "+str(cl.getReadLength(input_files[0]))+" -t "+str(cl1.threshold)+" -k "+mkmer)       ####### KREATION EXECUTION 
+	if(cl1.prog.upper() == "OASES"):
+		print("python "+pathname1+"/KREATION.py -p "+cl1.prog+" -s 2 -o "+pathn+" -r "+str(cl.getReadLength(input_files[0]))+" -t "+str(cl1.threshold)+" -k "+mkmer+ " -a m -c \""+kreation_para+"\"")
+		os.system("python "+pathname1+"/KREATION.py -p oases -s 2 -o "+pathn+" -r "+str(cl.getReadLength(input_files[0]))+" -t "+str(cl1.threshold)+" -k "+mkmer+ " -a m -c \""+kreation_para+"\"")
+	else:
+		os.system("python "+pathname1+"/KREATION.py -p transabyss -s 2 -o "+pathn+" -r "+str(cl.getReadLength(input_files[0]))+" -t "+str(cl1.threshold)+" -k "+mkmer+ " -a k -c \""+kreation_para+"\"")       
+
+####### KREATION EXECUTION 
 else:
 	if(cl1.prog.upper()=="OASES"):
 		with open(pathn + "/logfiles/commands.txt","a") as command_file:
@@ -520,22 +584,22 @@ else:
 			print "TRANSABYSS executed successfully"
 			os.system("mv "+pathn+"/transcripts-final.fa "+pathn+"/transcripts.fa")
 	
-
-
-
 ### Salmon execution ###
 if(not(os.path.exists("Salmon_output"))):
 	os.system("mkdir Salmon_output")
 
 if(step_number<=3):
-	if (fold_count == 0):
+	if(fold_count == 0):
 		index_output = pathn + "/Salmon_output/pipeline_index"
 		sa_index_para = sa_index_para + " -i " + index_output
 	
-	if(cl1.prog.upper()=="OASES"):
-		index_transcripts = pathn + "/OasesPipelineMerged/transcripts.fa"
+	if(cl1.threshold != None):
+		index_transcripts = pathn + "/Cluster/Combined/transcripts.fa"
 	else:
-		index_transcripts = pathn + "/transcripts.fa"
+		if(cl1.prog.upper()=="OASES"):
+			index_transcripts = pathn + "/OasesPipelineMerged/transcripts.fa"
+		else:
+			index_transcripts = pathn + "/transcripts.fa"
 	
 	sa_index_para = sa_index_para + " -t "+index_transcripts+ "" 
 
@@ -543,14 +607,13 @@ if(step_number<=3):
 		command_file.write(sa_index_para)
 		command_file.write("\n")
 		
-	os.system(sa_index_para+" >"+pathn+ "/logfiles/Salmon_index_log.txt 2>&1") 
+	#os.system(sa_index_para+" >"+pathn+ "/logfiles/Salmon_index_log.txt 2>&1") 
 
 	if(quant_count == 0):
 		quant_output = pathn + "/Salmon_output/pipeline_quant"
 		sa_quant_para = sa_quant_para + " -o " + quant_output
-	
 	if(cl1.left_name != None and cl1.right_name != None):
-		sa_quant_para = sa_quant_para + " -i "+index_output+ " -1 "+input_files[0]+" -2 "+input_files[1]+" "
+		sa_quant_para = sa_quant_para + " -i "+index_output+ " -1 "+arguments.split()[0]+" -2 "+arguments.split()[1]+" "
 	else:		
 		sa_quant_para = sa_quant_para + " -i "+index_output+ " -r " +arguments
 	
@@ -560,7 +623,6 @@ if(step_number<=3):
 	
 	print sa_quant_para	
 	os.system(sa_quant_para+" >"+pathn+"/logfiles/Salmon_quant_log.txt 2>stderr.txt")
-
 
 ### Check Salmon ###
 ffcsa = 0
@@ -573,20 +635,18 @@ if ffcsa == 1:
 else:
 	print "Salmon executed successfully"
 
-
-
-
-
-
 ######## Collecting Outputs ###########
 os.chdir(pathn)
 if(not(os.path.exists("Final_Output"))):
 	os.system("mkdir Final_Output")
 
-if(cl1.prog=="OASES"):
-	os.system("mv "+pathn + "/OasesPipelineMerged/transcripts.fa Final_Output/")
+if(cl1.threshold != None):
+	os.system("mv "+pathn + "/Cluster/Combined/transcripts.fa Final_Output/")
 else:
-	os.system("mv "+pathn + "/transcripts.fa Final_Output/")
+	if(cl1.prog=="OASES"):
+		os.system("mv "+pathn + "/OasesPipelineMerged/transcripts.fa Final_Output/")
+	else:
+		os.system("mv "+pathn + "/transcripts.fa Final_Output/")
 
 os.system("mv " +quant_output+ "/quant.sf Final_Output/")
 os.system("mv " +index_transcripts+ " Final_Output/")
@@ -598,5 +658,4 @@ else:
 	input_files.pop()
 	for i in input_files:
 		os.system("mv " +i+ " Final_Output/")
-
 
