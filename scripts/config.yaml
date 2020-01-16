@@ -1,0 +1,26 @@
+#General Parameters
+input: /MMCI/MS/algorithms/work/SOS/AssemblyOutput/SOS/A549/TransABySS/NormalizedReads/Normalized_1.fa,/MMCI/MS/algorithms/work/SOS/AssemblyOutput/SOS/A549/TransABySS/NormalizedReads/Normalized_2.fa
+outdir: /MMCI/MS/algorithms/work/SOS/AssemblyOutput/SOS/A549/TransABySS
+kmer: 25
+correction: true
+normalization: true
+#Read Characteristics
+type: paired
+interleaved: false
+readlength: 76
+inslength: 200
+configuration: fr  
+#Seecer Parameters
+seecertmp: /MMCI/MS/algorithms/work/SOS/SOS/tmp
+jellyfish: /MMCI/MS/DeNovoAssembly/work/SOS/Software/SEECER-0.1.3/jellyfish-1.1.11/bin/jellyfish
+scriptsfolder: /MMCI/MS/DeNovoAssembly/work/SOS/Software/SEECER-0.1.3/SEECER/bin/
+seecerdir: /MMCI/MS/DeNovoAssembly/work/SOS/Software/SEECER-0.1.3/SEECER/bin/
+#ORNA parameters
+ornabase: 1.7
+#KREATION Parameters
+kstep: 2
+kthreshold: 0.01
+kpname: transabyss
+kpadditional:  
+#Salmon Parameters
+#Program Name
