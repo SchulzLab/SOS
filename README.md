@@ -67,18 +67,22 @@ The config.txt should have the following configuration
 input: input_files //Two comma seperated files if input is paired end data
 outdir: Output directory to store the results 
 kmer: kmer to be used for error correction, normalization and assembly
+
 #Read Characteristics
 type: single or paired 
 readlength: 101  
 inslength: 200
+
 #Seecer Parameters (See seecer manual for more details)
 seecertmp: path to temp folder for seecer intermediate files
 jellyfish: path to jellyfish
 scriptsfolder: path to the scripts folder of seecer
 seecerdir: path to the bin folder of seecer
 seecerkmer: a seecer kmer if different than the kmer from general parameters
+
 #ORNA parameters
 ornabase: Base parameter of ORNA (set to 1.7 by default)
+
 #KREATION Parameters (See KREATION manual for more details)
 kstep: step size for kmer parameter of KREATION (set to 2 by default)
 kthreshold: Threshold parameter of seecer (set to 0.01 by default)
