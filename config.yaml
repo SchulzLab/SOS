@@ -1,13 +1,12 @@
 #General Parameters
-input: /MMCI/MS/algorithms/work/SOS/AssemblyOutput/SOS/Blood/TransABySS/NormalizedReads/Normalized_1.fa,/MMCI/MS/algorithms/work/SOS/AssemblyOutput/SOS/Blood/TransABySS/NormalizedReads/Normalized_2.fa
-outdir: /MMCI/MS/algorithms/work/SOS/AssemblyOutput/SOS/Blood/TransABySS/
-kmer: 31
-correction: true
+input: /MMCI/MS/algorithms/work/SOS/SOS/Sample_Data/SRR027877-small-p1.fastq,/MMCI/MS/algorithms/work/SOS/SOS/Sample_Data/SRR027877-small-p2.fastq
+outdir: /MMCI/MS/algorithms/work/SOS/SOS/TestOutput/
+kmer: 21
 normalization: true
 #Read Characteristics
 type: paired
 interleaved: false
-readlength: 100
+readlength: 30
 inslength: 200
 #Seecer Parameters
 seecertmp: /MMCI/MS/algorithms/work/SOS/AssemblyOutput/SOS/A549/TransABySS/tmp/
@@ -23,4 +22,5 @@ kthreshold: 0.01
 kpname: transabyss
 kpadditional: 
 #Salmon Parameters
+libtype: "IU"
 #Program Name

@@ -3,10 +3,12 @@ import os
 cfile=sys.argv[1]
 ofile=sys.argv[2]
 typ = sys.argv[3]
+infile = sys.argv[4]
+
 ins=200
 
 dirname=os.path.dirname(ofile)
-print(dirname)
+
 krt=dict()
 fl=open(cfile,"r")
 
@@ -14,8 +16,6 @@ flg=0
 for line in fl:
 	para=(line.rstrip()).split(":")
 	if(len(para)!=0):
-		if(para[0]=="input"):
-			infile=(para[1].strip()).rstrip()
 		if(para[0]=="kmer"):
 			kmer=(para[1].strip()).rstrip()
 		if(para[0]=="readlength"):
@@ -37,14 +37,12 @@ for line in fl:
 			else:
 				krt[para[0]] = ""
 
-
 files=infile.split(",")
 frmt = files[0].split(".")[-1]
 if(frmt.upper()=="FASTA" or frmt.upper()=="FA"):
 	frmt="fa"
 else:
 	frmt="fq"
-
 
 f=open(ofile, "a")
 f.write("#Program Name"+"\n")
