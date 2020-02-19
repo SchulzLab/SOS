@@ -1,13 +1,7 @@
 ## About
-**SOS** is a pipeline for *de novo* transcriptome assembly of one or more RNA-seq datasets.
-It currently features:
-* error correction with [SEECER](http://sb.cs.cmu.edu/seecer/)
-* Read reduction [ORNA](https://github.com/SchulzLab/ORNA)
-* de novo assembly
-* transcript quantification using [Salmon](https://github.com/COMBINE-lab/salmon)
-* automatic parameter estimation of kmer values for the assembly and error correction [KREATION](https://github.com/SchulzLab/KREATION)
-* config file support to streamline many datasets
-
+De novo transcriptome assembly of RNA-Seq data is an important problem. Studies of novel model organisms with a poorly annotated reference sequence can make use of different tools that have been proposed for de-novo transcriptome assembly. While successful, current tools rarely represent integrated solutions that can cope with large and diverse data sets. SOS pipeline is an integrated solution for the transcriptome assembly consisting of read error correction, read filtering, multi-k parameter optimized de-novo transcriptome assembly and transcript level expression computation. Currently, it supports the following algorithms:
+1.  Error correction: SEECER (can be downloaded and installed from the homepage(http://sb.cs.cmu.edu/seecer/))
+2.  Read normalization: ORNA (can be downloaded and installed from the github page of SchulzLab https://github.com/SchulzLab/ORNA)
 ##### Contact
 For questions or suggestions regarding SOS please contact
 
