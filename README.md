@@ -2,11 +2,11 @@
 De novo transcriptome assembly of RNA-Seq data is an important problem. Studies of novel model organisms with a poorly annotated reference sequence can make use of different tools that have been proposed for de-novo transcriptome assembly. While successful, current tools rarely represent integrated solutions that can cope with large and diverse data sets. SOS pipeline is an integrated solution for the transcriptome assembly consisting of read error correction, read filtering, multi-k parameter optimized de-novo transcriptome assembly and transcript level expression computation. Currently, it supports the following algorithms:
 1.  Error correction: SEECER (can be downloaded and installed from the homepage(http://sb.cs.cmu.edu/seecer/))
 2.  Read normalization: ORNA (can be downloaded and installed from https://github.com/SchulzLab/ORNA)
-3.  De novo transcriptome assembler: SOS currently supports four assembler namely - 
-    a) TransABySS 
-    b) TransLIG
-    c) SOAPdenovo-Trans
-    d) Oases
+3.  De novo transcriptome assembler: SOS currently supports four assembler namely 
+    a. TransABySS 
+    b. TransLIG
+    c. SOAPdenovo-Trans
+    d. Oases
 4.  Transcript level expression computation: Salmon (can be downloaded and installed from https://github.com/COMBINE-lab/salmon)  
 
 ##### Contact
