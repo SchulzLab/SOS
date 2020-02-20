@@ -50,7 +50,7 @@ The downloaded folder should have the following files:
 1.	After downloading the SOS distribution, change into the directory
 		cd SOS
 
-2.	Then run the python script install_script.py to install the softwares (SEECER,OASES and SAILFISH)
+2.	Then run the python script install_script.py to install the softwares (SEECER,OASES and SALMON)
 	```
 		python install_script.py -f <destination_folder>
 	```
