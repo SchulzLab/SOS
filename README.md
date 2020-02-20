@@ -57,13 +57,6 @@ The downloaded folder should have the following files:
 	This should install SEECER, OASES, ORNA and SALMON in the provided destination folder. Additional assembly algorithms can be downloaded seperately.  
 	Note: Running the script is optional. The users can download and install the softwares seperately  
 
-3.	The PATH variable should contain executables of each software and the LD_LIBRARY_PATH variable should contain 'lib' folder of Sailfish.
-	To make this process easier we have included a bash script export.sh. To use this script type the following command:
-	```
-		source export.sh <folder_name>
-	```
-	Note: To make use of this script all the softwares should be installed in the same directory (folder_name)
-
 ## Config file
 The config.txt should have the following configuration
 ```
