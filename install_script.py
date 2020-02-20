@@ -10,7 +10,7 @@ class install_script():
 		self.prog_installed = []
 
 	def obtaining_tar(self, prog, path):
-		if (prog == 6):
+		if (prog == 5):
 			output1 = commands.getstatusoutput("uname")		
 			if(output1[1].upper() == "LINUX"):			
 				chk2 = self.checkfolder("salmon-1.1.0_linux_x86_64.tar.gz")
@@ -64,7 +64,7 @@ class install_script():
 				else:
 					print ("The path already contains a folder named KREATION. Please rename it or remove it from the path")
 		
-		if(prog==3):
+		if(prog==2):
 			output = commands.getstatusoutput("uname")		
 			if(output[1].upper() == "LINUX"):			
 				chk2 = self.checkfolder("salmon-1.1.0_linux_x86_64")
@@ -87,32 +87,22 @@ class install_script():
 				print ("The path already contains a folder named salmon-1.1.0_linux_x86_64.tar.gz. please rename it or remove it from the path") 
 				
 		
-		if(prog==2):
+		if(prog==1):
 			chk6 = self.checkfolder("oases")
 			if(chk6 == False):
 				os.system("git clone http://github.com/dzerbino/oases.git")
 			else:
 				print ("The path already contains a folder named oases. please rename the folder or remove it from the path")
 				sys.exit()
-			
-		if(prog==1):
-			chk4 = self.checkfolder("SEECER-0.1.3.tar.gz")
-			if(chk4 == False):
-				os.system("wget http://sb.cs.cmu.edu/seecer/downloads/SEECER-0.1.3.tar.gz")
-				os.system("tar -zxvf SEECER-0.1.3.tar.gz")
-				self.install_seecer(path)
-			else:
-				print ("The path already contains a folder named SEECER-0.1.3.tar.gz. please rename it or remove it from the path")
-				sys.exit()
 		
-		if(prog==6):
+		if(prog==7):
 			chk5 = self.checkfolder("velvet")
 			if(chk5 == False):
 				os.system("git clone http://github.com/dzerbino/velvet.git")
 			else:
 				print ("The path already contains a folder named velvet. please rename the folder or remove it from the path")
 				sys.exit()
-		if (prog == 4):
+		if (prog == 3):
 			output1 = commands.getstatusoutput("uname")		
 			if(output1[1].upper() == "LINUX"):			
 				chk2 = self.checkfolder("ORNA")
@@ -124,7 +114,7 @@ class install_script():
 			else:
 				print("Unknown operating system")
 
-		if (prog == 5):
+		if (prog == 4):
 			output1 = commands.getstatusoutput("uname")		
 			if(output1[1].upper() == "LINUX"):			
 				chk2 = self.checkfolder("KREATION")
@@ -157,18 +147,6 @@ class install_script():
 		os.system("make "+cs)
 		self.prog_installed.append(path1)
 		
-	def install_seecer(self, path):
-		path3 = path + "/SEECER-0.1.3"
-		temp_pa = path3 + "/jellyfish-1.1.11/"
-		os.chdir(temp_pa)
-		os.system("./configure")
-		os.system("make")
-		temp_pa1 = path3 + "/SEECER/"
-		os.chdir(temp_pa1)
-		os.system("./configure")
-		os.system("make")
-		self.prog_installed.append(temp_pa1)
-
 	def getoptions(self):
 		parser = OptionParser()
 		parser.add_option("-f", "--folder", dest="foldername", help="destination folder")
@@ -231,13 +209,12 @@ if(y1.foldername != None):
 pwd = os.getcwd()
 
 print ("Programs to install :")
-print ("1.	SEECER")
-print ("2.	OASES")
-print ("3.	SALMON")
-print ("4.	ORNA")
-print ("5.	KREATION")
-print ("6.	ALL")
-print ("7.	QUIT")
+print ("1.	OASES")
+print ("2.	SALMON")
+print ("3.	ORNA")
+print ("4.	KREATION")
+print ("5.	ALL")
+print ("6.	QUIT")
 
 x1 = raw_input("Enter the option number (if multiple options then separate it by comma): ")
 y = x1.split(",")
@@ -246,11 +223,11 @@ vd = ""
 flg = 0
 cs = ""
 a13 = ""
-if("7" in y):
+if("6" in y):
 	print "Thank you. It was nice working for you"
 	sys.exit()
 
-if "6" in y:
+if "5" in y:
 	vc = raw_input("Execution of Oases requires velvet. Do you want to install velvet (y/n) : ")
 	if(vc == "y"):
 		ch = raw_input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
@@ -267,16 +244,15 @@ if "6" in y:
 	if(vc == "n"):
 		vd = raw_input("Enter the location of velvet : ")
 		cs = cs + " \'VELVET_DIR=" + vd +"\'"
-	x.obtaining_tar(4, pwd)
 	if (flg == 1):
-		x.obtaining_tar(5, pwd)
+		x.obtaining_tar(7, pwd)
 		x.install_velvet(pwd, cs)	
+	x.obtaining_tar(1, pwd)	
 	x.install_oases(pwd, cs)
-	x.install_seecer(pwd)	
 
 else:
 	for i in y:
-		if(int(i) == 2):
+		if(int(i) == 1):
 			vc = raw_input("Execution of Oases requires velvet. Do you want to install velvet (y/n) : ")
 			if(vc == "y"):
 				ch = raw_input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
@@ -297,13 +273,13 @@ else:
 					cs = cs + " \'VELVET_DIR=" +pwd+"\\"+ vd +"\'"
 				else:
 					cs = cs + " \'VELVET_DIR=" + vd +"\'"
-			x.obtaining_tar(2,pwd)
+			x.obtaining_tar(1,pwd)
 			if(flg == 1):			
-				x.obtaining_tar(6,pwd)
+				x.obtaining_tar(7,pwd)
 				x.install_velvet(pwd, cs)
 			x.install_oases(pwd, cs)
-		if(int(i)==4):
-			x.obtaining_tar(4,pwd)
+		elif(int(i)==3):
+			x.obtaining_tar(3,pwd)
 			x.install_orna(pwd)
 		else:
 			x.obtaining_tar(int(i), pwd)
