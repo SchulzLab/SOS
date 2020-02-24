@@ -106,7 +106,7 @@ libtype: library type
 
 
 ## Usage
-The pipeline can be run using the following command:
+The pipeline can be run using the following command from the SOS folder:
 ```
 	snakemake all
 ```
