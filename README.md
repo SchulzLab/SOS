@@ -1,24 +1,25 @@
 ## About
 De novo transcriptome assembly of RNA-Seq data is an important problem. Studies of novel model organisms with a poorly annotated reference sequence can make use of different tools that have been proposed for de-novo transcriptome assembly. While successful, current tools rarely represent integrated solutions that can cope with large and diverse data sets. SOS pipeline is an integrated solution for the transcriptome assembly consisting of read error correction, read filtering, multi-k parameter optimized de-novo transcriptome assembly and transcript level expression estimates. SOS has the following workflow:
 ### Error correction: 
-The input reads is first error corrected using SEECER. We use a modified version of seecer which can be downloaded via (link to the software)
+The input reads are first error corrected using SEECER. We use a modified version of seecer which can be downloaded via (link to the software)
 ### Read normalization:
-SOS normalizes the dataset using ORNA which can be downloaded and installed via https://github.com/SchulzLab/ORNA. This step is optional. We advise the users to skip this step if the coverage of the dataset is low.
+SOS normalizes the dataset using ORNA which can be downloaded and installed via https://github.com/SchulzLab/ORNA. This step is optional. We advise the users to skip this step if the coverage of the dataset is low, i.e. if there is not a problem with runtime/memory consumption of the assembly process. For datasets> 100 million reads, normalization is recommended.
+
 ### Transcriptome assembly:
-The pipeline is flexible enough to incorporate any transcriptome assembler by changing a few lines of codes (details given below). We tested SOS on four different assemblers namely:
+The pipeline is flexible and can incorporate any transcriptome assembler by changing a few lines of codes (details given below). We tested SOS on four different assemblers namely:
 
 * TransABySS
 * SOAPdenovo-Trans
-* TrasnLiG
+* TransLiG
 * Oases 
 
-Note: SOS generates multiple assemblies using multiple kmer sizes and merges them to form a single non-redundant assemblies. The lower kmer size is by default set to one-third of the read length and the higher kmer size of the range is decided using KREATION tool. Hence, if oases is selected for assembly, then the modified version of the assembler (provided with KREATION script) should be used. 
+Note: SOS generates multiple assemblies using multiple kmer sizes and merges them to form a single non-redundant assembly. The lower kmer size is by default set to one-third of the read length and the higher kmer size of the range is decided using the KREATION tool. Hence, if oases is selected for assembly, then the modified version of the assembler (provided with KREATION script) should be used. 
 
 ### Transcript level expression estimates:
-The pipeline uses salmon for transcript level expression estimatation which can be downloaded and installed via https://github.com/COMBINE-lab/salmon. 
+The pipeline uses salmon for transcript level expression estimation, which can be downloaded and installed via https://github.com/COMBINE-lab/salmon. 
 
 
-##Running SOS:
+## Running SOS:
 
 ### Requirements
 Basic skeleton of SOS requires:
