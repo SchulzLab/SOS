@@ -72,8 +72,11 @@ The downloaded folder should have the following files:
 	```
 
 ## Config file
-The config.txt should have the following configuration
+The config.txt has the following configuration
 ```
+## Config file for the execution of SOS. All parameters are required unless otherwise stated
+##For more information about the parameters, please refer to the manual/readme files of the individual algorithm
+
 #General Parameters
 input: path to read files. Multiple files should be combined into one file
 outdir: path to the output directory
@@ -81,30 +84,29 @@ kmer: kmer to be used for normalization, assembly and quantification
 normalization: false if you want to skip the normalization step. otherwise true
 
 #Read Specific parameters
-type: paired/single (required)
-interleaved: true/false (required)
-readlength: length of the reads given as input. (required) 
-inslength: insert-length if the data is paired end (required)
+type: paired/single 
+interleaved: true/false (required if the input is paired end)
+readlength: length of the reads given as input.  
+inslength: insert-length if the data is paired end (required if the input is paired end)
 
 #Seecer Parameters
-seecertmp: tmp folder required for SEECER (required)
-jellyfish: path to jellyfish executable (required) 
-binfolder: path to seecer bin folder (required)
-seecerkmer: kmer used for error correction (default: 17)
+seecertmp: tmp folder required for SEECER
+jellyfish: path to jellyfish executable
+binfolder: path to seecer bin folder
+seecerkmer: kmer used for error correction
 
 #ORNA parameters
-ornabase: base threshold of ORNA (default: 1.7)
+ornabase: logarithm base for calculating the kmer abundance threshold in ORNA
 
 #KREATION Parameters
-kstep: step size required for KREATION execution (default: 2)
-kthreshold: d_score cutoff for KREATION (default: 0.01)
+kstep: step size required for KREATION execution
+kthreshold: d_score cutoff for KREATION
 kpname: assembler executable name 
 kpadditional: 
 
 #Salmon Parameters
 libtype: library type for the reads given as input to salmon
 
-##For more information about the parameters, please refer to the manual/readme files of the individual algorithm
 ```
 
 ####Config file parameters
@@ -117,15 +119,46 @@ libtype: library type for the reads given as input to salmon
 
 **kmer**: kmer size to be used for read normalization, transcript assembly and quantification. We suggest a kmer size equivalent to 1/3rd of the read length. 
 
+**normalization**: true/false. Indicates whether ORNA should be run on the datasets. We suggest to include normalization step for large datasets(>200M reads) 
+
 **Read specific parameters**
 
 **type**: "single" or "paired" 
 
-**interleaved**: true/false. Some assemblers do not accept paired files which are interleaved. Hence, an interleaved read file would be seperated into two individual files representing the pairs.
+**interleaved**: true/false. This parameter is required if the input data is paired-end. Some assemblers do not accept interleaved paired-end files. Hence, an such files would be seperated into two individual files representing the pairs.
 
-**readlength**: The length of the reads. If reads have different sizes then please provided the length of the longest read in the dataset
+**readlength**: Length of the reads. If reads have different sizes then please provided the length of the longest read in the dataset
 
-**ins-length**: insert size for paired end data
+**ins-length**: Insert size for paired end data
+
+**seecer specific parameters**
+
+**seecertmp**: Temporary folder to store intermediate files generated from SEECER. The folder would be deleted after the completion of the error correction step.
+
+**jellyfish**: Absolute path to the jellyfish library. SEECER uses jellyfish to count kmers and build a consensus sequence. 
+
+**binfolder**: Absolute path to seecer bin folder
+
+**seecerkmer**: kmer size to be used for error correction. 
+
+**ORNA parameters**
+
+**ornabase**: The base of the log function which is to be used by ORNA for calculating the threshold for each kmer in the dataset. Refer to the manual of ORNA for more details. For optimal results we suggest a value of 1.7
+
+**KREATION parameters**
+
+**kstep**: kmer increment size to be used by KREATION. For instance, if the kstep=2 and the value of kmer=17, then assemblies would be generated for k=17,19,21... till an optimal assembly is reached. For more details refer to KREATION manual.
+
+**kthreshold**: d_score threshold to be used by KREATION. For more details, refer to KREATION manual.
+
+**kpname**: Name of the assembler to be used. Please note that the name should match the assembler executable file.
+
+**kpadditonal**: Additional assembler parameters to be used. This can vary depending upon the assembler used. 
+
+**salmon parameters**
+
+**libtype**: Type of the sequencing library from which the reads originate. For more details, please refer to salmon manual. 
+
 
 ## Usage
 The pipeline can be run using the following command from the SOS folder:
