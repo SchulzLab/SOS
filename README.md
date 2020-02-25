@@ -113,51 +113,51 @@ libtype: library type for the reads given as input to salmon
 
 **General Parameters**
 
-**input**: Absolute path of the input read fasta/q file. If the data is paired end, then they should either be interleaved together to form a single file or given as two comma seperated filenames. Multiple single ended files should be combined together to form a single read file. Please avoid using symbols such as ~ in the file path.
+	**input**: Absolute path of the input read fasta/q file. If the data is paired end, then they should either be interleaved together to form a single file or given as two comma seperated filenames. Multiple single ended files should be combined together to form a single read file. Please avoid using symbols such as ~ in the file path.
 
-**outdir**: Absolute path to the output directory. The folder will be created if not present.
+	**outdir**: Absolute path to the output directory. The folder will be created if not present.
 
-**kmer**: kmer size to be used for read normalization, transcript assembly and quantification. We suggest a kmer size equivalent to 1/3rd of the read length. 
+	**kmer**: kmer size to be used for read normalization, transcript assembly and quantification. We suggest a kmer size equivalent to 1/3rd of the read length. 
 
-**normalization**: true/false. Indicates whether ORNA should be run on the datasets. We suggest to include normalization step for large datasets(>200M reads) 
+	**normalization**: true/false. Indicates whether ORNA should be run on the datasets. We suggest to include normalization step for large datasets(>200M reads) 
 
 **Read specific parameters**
+	
+	**type**: "single" or "paired" 
 
-**type**: "single" or "paired" 
+	**interleaved**: true/false. This parameter is required if the input data is paired-end. Some assemblers do not accept interleaved paired-end files. Hence, an such files would be seperated into two individual files representing the pairs.
 
-**interleaved**: true/false. This parameter is required if the input data is paired-end. Some assemblers do not accept interleaved paired-end files. Hence, an such files would be seperated into two individual files representing the pairs.
+	**readlength**: Length of the reads. If reads have different sizes then please provided the length of the longest read in the dataset
 
-**readlength**: Length of the reads. If reads have different sizes then please provided the length of the longest read in the dataset
-
-**ins-length**: Insert size for paired end data
+	**ins-length**: Insert size for paired end data
 
 **seecer specific parameters**
 
-**seecertmp**: Temporary folder to store intermediate files generated from SEECER. The folder would be deleted after the completion of the error correction step.
+	**seecertmp**: Temporary folder to store intermediate files generated from SEECER. The folder would be deleted after the completion of the error correction step.
 
-**jellyfish**: Absolute path to the jellyfish library. SEECER uses jellyfish to count kmers and build a consensus sequence. 
+	**jellyfish**: Absolute path to the jellyfish library. SEECER uses jellyfish to count kmers and build a consensus sequence. 
 
-**binfolder**: Absolute path to seecer bin folder
+	**binfolder**: Absolute path to seecer bin folder
 
-**seecerkmer**: kmer size to be used for error correction. 
+	**seecerkmer**: kmer size to be used for error correction. 
 
 **ORNA parameters**
 
-**ornabase**: The base of the log function which is to be used by ORNA for calculating the threshold for each kmer in the dataset. Refer to the manual of ORNA for more details. For optimal results we suggest a value of 1.7
+	**ornabase**: The base of the log function which is to be used by ORNA for calculating the threshold for each kmer in the dataset. Refer to the manual of ORNA for more details. For optimal results we suggest a value of 1.7
 
 **KREATION parameters**
 
-**kstep**: kmer increment size to be used by KREATION. For instance, if the kstep=2 and the value of kmer=17, then assemblies would be generated for k=17,19,21... till an optimal assembly is reached. For more details refer to KREATION manual.
+	**kstep**: kmer increment size to be used by KREATION. For instance, if the kstep=2 and the value of kmer=17, then assemblies would be generated for k=17,19,21... till an optimal assembly is reached. For more details refer to KREATION manual.
 
-**kthreshold**: d_score threshold to be used by KREATION. For more details, refer to KREATION manual.
+	**kthreshold**: d_score threshold to be used by KREATION. For more details, refer to KREATION manual.
 
-**kpname**: Name of the assembler to be used. Please note that the name should match the assembler executable file.
+	**kpname**: Name of the assembler to be used. Please note that the name should match the assembler executable file.
 
-**kpadditonal**: Additional assembler parameters to be used. This can vary depending upon the assembler used. 
+	**kpadditonal**: Additional assembler parameters to be used. This can vary depending upon the assembler used. 
 
 **salmon parameters**
 
-**libtype**: Type of the sequencing library from which the reads originate. For more details, please refer to salmon manual. 
+	**libtype**: Type of the sequencing library from which the reads originate. For more details, please refer to salmon manual. 
 
 
 ## Usage
