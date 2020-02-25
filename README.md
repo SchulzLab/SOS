@@ -42,7 +42,7 @@ The pipeline can be downloaded using the following command:
 The downloaded folder should have the following files:
 
 * Snakemake file
-* Sample config file for snakemake: config.yaml
+* Sample config file for snakemake
 * install_script.py	
 * A folder consisting of sample data
 * A folder consisting of supporting scripts
@@ -109,7 +109,7 @@ libtype: library type for the reads given as input to salmon
 
 ```
 
-####Config file parameters
+**Config file parameters**
 
 **General Parameters**
 
