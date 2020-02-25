@@ -75,35 +75,57 @@ The downloaded folder should have the following files:
 The config.txt should have the following configuration
 ```
 #General Parameters
-input: input_files //Two comma seperated files if input is paired end data
-outdir: Output directory to store the results 
-kmer: kmer to be used for error correction, normalization and assembly
+input: path to read files. Multiple files should be combined into one file
+outdir: path to the output directory
+kmer: kmer to be used for normalization, assembly and quantification
+normalization: false if you want to skip the normalization step. otherwise true
 
-#Read Characteristics
-type: single or paired 
-readlength: 101  
-inslength: 200
+#Read Specific parameters
+type: paired/single (required)
+interleaved: true/false (required)
+readlength: length of the reads given as input. (required) 
+inslength: insert-length if the data is paired end (required)
 
-#Seecer Parameters (See seecer manual for more details)
-seecertmp: path to temp folder for seecer intermediate files
-jellyfish: path to jellyfish
-scriptsfolder: path to the scripts folder of seecer
-seecerdir: path to the bin folder of seecer
-seecerkmer: a seecer kmer if different than the kmer from general parameters
+#Seecer Parameters
+seecertmp: tmp folder required for SEECER (required)
+jellyfish: path to jellyfish executable (required) 
+binfolder: path to seecer bin folder (required)
+seecerkmer: kmer used for error correction (default: 17)
 
 #ORNA parameters
-ornabase: Base parameter of ORNA (set to 1.7 by default)
+ornabase: base threshold of ORNA (default: 1.7)
 
-#KREATION Parameters (See KREATION manual for more details)
-kstep: step size for kmer parameter of KREATION (set to 2 by default)
-kthreshold: Threshold parameter of seecer (set to 0.01 by default)
-kpname: Assembly algorithm to be used with KREATION (Current supported assemblers: Oases, TransABySS, TransLiG and SOAPdenovotrans)
-kpadditional: Additional commands to be used with KREATION
+#KREATION Parameters
+kstep: step size required for KREATION execution (default: 2)
+kthreshold: d_score cutoff for KREATION (default: 0.01)
+kpname: assembler executable name 
+kpadditional: 
 
 #Salmon Parameters
-libtype: library type
+libtype: library type for the reads given as input to salmon
+
+##For more information about the parameters, please refer to the manual/readme files of the individual algorithm
 ```
 
+####Config file parameters
+
+**General Parameters**
+
+**input**: Absolute path of the input read fasta/q file. If the data is paired end, then they should either be interleaved together to form a single file or given as two comma seperated filenames. Multiple single ended files should be combined together to form a single read file. Please avoid using symbols such as ~ in the file path.
+
+**outdir**: Absolute path to the output directory. The folder will be created if not present.
+
+**kmer**: kmer size to be used for read normalization, transcript assembly and quantification. We suggest a kmer size equivalent to 1/3rd of the read length. 
+
+**Read specific parameters**
+
+**type**: "single" or "paired" 
+
+**interleaved**: true/false. Some assemblers do not accept paired files which are interleaved. Hence, an interleaved read file would be seperated into two individual files representing the pairs.
+
+**readlength**: The length of the reads. If reads have different sizes then please provided the length of the longest read in the dataset
+
+**ins-length**: insert size for paired end data
 
 ## Usage
 The pipeline can be run using the following command from the SOS folder:
