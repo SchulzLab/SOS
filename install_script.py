@@ -42,7 +42,7 @@ class install_script():
 				#	os.system("tar -zxvf Sailfish-0.6.2-Mac_x86-64.tar.gz")
 				#	self.prog_installed.append(path+"/Sailfish-0.6.2-Mac_x86-64")
 				else:
-					print "Unknown operating system"
+					print("Unknown operating system")
 					sys.exit()
 								
 			else:
@@ -81,7 +81,7 @@ class install_script():
 				#	os.system("tar -zxvf Sailfish-0.6.2-Mac_x86-64.tar.gz")
 				#	self.prog_installed.append(path+"/Sailfish-0.6.2-Mac_x86-64")
 				else:
-					print "Unknown operating system"
+					print("Unknown operating system")
 					sys.exit()
 			else:
 				print ("The path already contains a folder named salmon-1.1.0_linux_x86_64.tar.gz. please rename it or remove it from the path") 
@@ -116,7 +116,16 @@ class install_script():
 
 		if (prog == 4):
 			output1 = commands.getstatusoutput("uname")		
-			if(output1[1].upper() == "LINUX"):			
+			if(output1[1].upper() == "LINUX"):
+				s,t = commands.getstatusoutput("which cd-hit-est")
+				if(s == 256):
+					uc = raw_input("cd-hit is not found in the environment variables. Do you want to install (y/n) : ")
+					if(uc == "y"):
+						os.system("git clone https://github.com/weizhongli/cdhit")
+						self.install_cdhit(path)
+						os.chdir(path)
+					else:
+						print ("Please remember that cd-hit-est is required for the running of KREATION and must be in the environment variable $PATH")
 				chk2 = self.checkfolder("KREATION")
 				if(chk2 == False):
 					os.system("git clone https://github.com/SchulzLab/KREATION")
@@ -143,10 +152,16 @@ class install_script():
 	def install_velvet(self,path, cs):
 		path1 = path + "/velvet"
 		os.chdir(path1) 
-		print "------Velvet installation------"
+		print("------Velvet installation------")
 		os.system("make "+cs)
 		self.prog_installed.append(path1)
-		
+
+	def install_cdhit(self, path):
+		path1 = path + "/cdhit"
+		os.chdir(path1)
+		print("------cd-hit-est installation------")
+		os.system("make")
+
 	def getoptions(self):
 		parser = OptionParser()
 		parser.add_option("-f", "--folder", dest="foldername", help="destination folder")
@@ -162,33 +177,33 @@ class install_script():
 			if "SEECER" in i:
 				x1 = os.listdir(i+"/bin/")
 				if(("seecer" in x1) and ("random_sub_N" in x1) and ("run_seecer.sh" in x1) and ("run_jellyfish.sh" in x1) and ("replace_ids" in x1)):
-					print "SEECER installed successfully"
-					s#elf.export_prog(i)
+					print("SEECER installed successfully")
+					#self.export_prog(i)
 				else:
-					print "SEECER was not installed properly. Please try again"				
+					print("SEECER was not installed properly. Please try again")				
 			if "oases" in i:
 				x2 = os.listdir(i)
 				if ("oases" in x2):
-					print "oases installed successfully"
+					print("oases installed successfully")
 					#self.export_prog(i)
 				else:
-					print "oases was not installed properly. please try again"
+					print("oases was not installed properly. please try again")
 			
 			if "velvet" in i:
 				x3 = os.listdir(i)
 				if(("velvetg" in x3) and ("velveth" in x3)):
-					print "velvet installed successfully"
+					print("velvet installed successfully")
 					#self.export_prog(i)
 				else:
-					print "velvet was not installed properly. Please try again"
+					print("velvet was not installed properly. Please try again")
 					
 			if ("salmon-1.1.0_linux_x86_64.tar.gz" in i):
 				x4 = os.listdir(i+"/bin/")
 				if("salmon" in x4):
-					print "Sailfish installed successfully"
+					print("Sailfish installed successfully")
 					#self.export_prog(i)
 				else:
-					print "Sailfish was not installed properly. Please try again"
+					print("Sailfish was not installed properly. Please try again")
 
 ########### MAIN PROGRAM ###########3
 
@@ -224,7 +239,7 @@ flg = 0
 cs = ""
 a13 = ""
 if("6" in y):
-	print "Thank you. It was nice working for you"
+	print("Thank you. It was nice working for you")
 	sys.exit()
 
 if "5" in y:
@@ -232,7 +247,7 @@ if "5" in y:
 	if(vc == "y"):
 		ch = raw_input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
 		if(ch == "y"):
-			print "Enter the additional compilation settings of velvet seperated by space :"
+			print("Enter the additional compilation settings of velvet seperated by space :")
 			a1 = raw_input()
 			a11 = a1.split()
 			for a2 in a11:
@@ -257,7 +272,7 @@ else:
 			if(vc == "y"):
 				ch = raw_input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
 				if(ch == "y"):
-					print "Enter the additional compilation settings of velvet seperated by space :"
+					print("Enter the additional compilation settings of velvet seperated by space :")
 					a1 = raw_input()
 					a11 = a1.split()
 					for a2 in a11:
