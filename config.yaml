@@ -1,25 +1,26 @@
 #General Parameters
-input: /MMCI/MS/algorithms/work/SOS/SOS/Sample_Data/SRR027877-small-p1.fastq,/MMCI/MS/algorithms/work/SOS/SOS/Sample_Data/SRR027877-small-p2.fastq
-outdir: /MMCI/MS/algorithms/work/SOS/SOS/TestOutput/
-kmer: 21
-normalization: true
+input: path to read files. Multiple files should be combined into one file
+outdir: path to the output directory
+kmer: kmer to be used for normalization, assembly and quantification
+normalization: false if you want to skip the normalization step. otherwise true
 #Read Characteristics
-type: paired
-interleaved: false
-readlength: 30
-inslength: 200
+type: paired/single
+interleaved: true/false
+readlength: length of the reads given as input. 
+inslength: insert-length if the data is paired end 
 #Seecer Parameters
-seecertmp: /MMCI/MS/algorithms/work/SOS/AssemblyOutput/SOS/A549/TransABySS/tmp/
-jellyfish: /MMCI/MS/DeNovoAssembly/work/SOS/Software/SEECER-0.1.3/jellyfish-1.1.11/bin/jellyfish
-scriptsfolder: /MMCI/MS/DeNovoAssembly/work/SOS/Software/SEECER-0.1.3/SEECER/bin/
-seecerdir: /MMCI/MS/DeNovoAssembly/work/SOS/Software/SEECER-0.1.3/SEECER/bin/
-seecerkmer: 17
+seecertmp: tmp folder required for SEECER (required parameter)
+jellyfish: path to jellyfish executable (required parameter) 
+binfolder: path to seecer bin folder (required parameter)
+seecerkmer: kmer used for error correction (default: 17)
 #ORNA parameters
-ornabase: 1.7
+ornabase: base threshold of ORNA (default: 1.7)
 #KREATION Parameters
-kstep: 2
-kthreshold: 0.01
-kpname: transabyss
+kstep: step size required for KREATION execution (default: 2)
+kthreshold: d_score cutoff for KREATION (default: 0.01)
+kpname: assembler executable name 
 kpadditional: 
 #Salmon Parameters
-libtype: "IU"
+libtype: library type for the reads given as input to salmon
+
+##For more information about the parameters, please refer to the manual/readme files of the individual algorithm
