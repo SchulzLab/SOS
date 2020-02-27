@@ -10,83 +10,49 @@ class install_script():
 		self.prog_installed = []
 
 	def obtaining_tar(self, prog, path):
-		if (prog == 5):
-			output1 = commands.getstatusoutput("uname")		
-			if(output1[1].upper() == "LINUX"):			
-				chk2 = self.checkfolder("salmon-1.1.0_linux_x86_64.tar.gz")
-			else:
-				chk2 = self.checkfolder("salmon-1.1.0_linux_x86_64.tar.gz")
-
+		if (prog == 6):
+			#Before obtaining tha tar file of the corresponding tool, we always check whether the folder exists in the path. If it exists then we throw an exception otherwise we download the tool
+			#Checking and downloading oases			
 			chk = self.checkfolder("oases")
-			
 			if(chk == False):
 				os.system("git clone --recursive http://github.com/dzerbino/oases.git")
 			else:
 				print ("The path already contains a folder named oases. Please rename the folder or remove it from the path")
 				sys.exit()
 							
-			chk1 = self.checkfolder("SEECER-0.1.3.tar.gz")
+			#Checking and downloading SEECER. This is not the version mentioned in the manuscript of SEECER. This is the modified version which was used for the SOS manuscript. 
+			chk1 = self.checkfolder("SEECER.tar.gz")
 			if(chk1 == False):
-				os.system("wget http://sb.cs.cmu.edu/seecer/downloads/SEECER-0.1.3.tar.gz")
-				os.system("tar -zxvf SEECER-0.1.3.tar.gz")
+				os.system("wget https://zenodo.org/record/3686150/files/SEECER.tar.gz?download=1")
+				os.system("tar -zxvf SEECER.tar.gz")
 			else:
-				print ("The path already contains a folder named SEECER-0.1.3.tar.gz. Please rename it or remove it from the path")
+				print ("The path already contains a folder named SEECER.tar.gz. Please rename it or remove it from the path")
 			
+			#Checking and downloading salmon
+			chk2 = self.checkfolder("salmon-1.1.0_linux_x86_64.tar.gz")
 			if(chk2 == False):
-				if (output1[1].upper() == "LINUX"):
-					os.system("wget https://github.com/COMBINE-lab/salmon/releases/download/v1.1.0/salmon-1.1.0_linux_x86_64.tar.gz")
-					os.system("tar -zxvf salmon-1.1.0_linux_x86_64.tar.gz")
-					self.prog_installed.append(path+"/salmon-1.1.0_linux_x86_64.tar.gz")
-				#elif(output1[1].upper() == "DARWIN"):
-				#	os.system("wget https://github.com/kingsfordgroup/sailfish/releases/download/v0.6.2/Sailfish-0.6.2-Mac_x86-64.tar.gz --no-check-certificate")
-				#	os.system("tar -zxvf Sailfish-0.6.2-Mac_x86-64.tar.gz")
-				#	self.prog_installed.append(path+"/Sailfish-0.6.2-Mac_x86-64")
-				else:
-					print("Unknown operating system")
-					sys.exit()
-								
+				#To get the latest version of salmon, please change the link in the next three lines
+				os.system("wget https://github.com/COMBINE-lab/salmon/releases/download/v1.1.0/salmon-1.1.0_linux_x86_64.tar.gz") 
+				os.system("tar -zxvf salmon-1.1.0_linux_x86_64.tar.gz")
+				self.prog_installed.append(path+"/salmon-1.1.0_linux_x86_64.tar.gz")
 			else:
 				print ("The path already contains a folder named salmon-1.1.0_linux_x86_64.tar.gz. Please rename it or remove it from the path") 
 
-			if(output1[1].upper() == "LINUX"):			
-				chk2 = self.checkfolder("ORNA")
-				if(chk2 == False):
-					os.system("git clone https://github.com/SchulzLab/ORNA")
-					self.prog_installed.append(path+"/ORNA")
-				else:
-					print ("The path already contains a folder named ORNA. Please rename it or remove it from the path")
+			chk3 = self.checkfolder("ORNA")
+			if(chk3 == False):
+				os.system("git clone https://github.com/SchulzLab/ORNA")
+				self.prog_installed.append(path+"/ORNA")
+			else:
+				print ("The path already contains a folder named ORNA. Please rename it or remove it from the path")
 
-			if(output1[1].upper() == "LINUX"):			
-				chk2 = self.checkfolder("KREATION")
-				if(chk2 == False):
-					os.system("git clone https://github.com/SchulzLab/KREATION")
-					self.prog_installed.append(path+"/KREATION")
-				else:
-					print ("The path already contains a folder named KREATION. Please rename it or remove it from the path")
-		
-		if(prog==2):
-			output = commands.getstatusoutput("uname")		
-			if(output[1].upper() == "LINUX"):			
-				chk2 = self.checkfolder("salmon-1.1.0_linux_x86_64")
+			chk4 = self.checkfolder("KREATION")
+			if(chk4 == False):
+				os.system("git clone https://github.com/SchulzLab/KREATION")
+				self.prog_installed.append(path+"/KREATION")
 			else:
-				chk2 = self.checkfolder("salmon-1.1.0_linux_x86_64")
-							
-			if(chk2 == False):
-				if (output[1].upper() == "LINUX"):
-					os.system("wget https://github.com/COMBINE-lab/salmon/releases/download/v1.1.0/salmon-1.1.0_linux_x86_64.tar.gz")
-					os.system("tar -zxvf salmon-1.1.0_linux_x86_64.tar.gz")
-					self.prog_installed.append(path+"/salmon-1.1.0_linux_x86_64")
-				#elif(output[1].upper() == "DARWIN"):
-				#	os.system("wget https://github.com/kingsfordgroup/sailfish/releases/download/v0.6.2/Sailfish-0.6.2-Mac_x86-64.tar.gz --no-check-certificate")
-				#	os.system("tar -zxvf Sailfish-0.6.2-Mac_x86-64.tar.gz")
-				#	self.prog_installed.append(path+"/Sailfish-0.6.2-Mac_x86-64")
-				else:
-					print("Unknown operating system")
-					sys.exit()
-			else:
-				print ("The path already contains a folder named salmon-1.1.0_linux_x86_64.tar.gz. please rename it or remove it from the path") 
-				
+				print ("The path already contains a folder named KREATION. Please rename it or remove it from the path")
 		
+
 		if(prog==1):
 			chk6 = self.checkfolder("oases")
 			if(chk6 == False):
@@ -95,53 +61,67 @@ class install_script():
 				print ("The path already contains a folder named oases. please rename the folder or remove it from the path")
 				sys.exit()
 		
-		if(prog==7):
+		if(prog==2):
+			output = commands.getstatusoutput("uname")		
+			chk2 = self.checkfolder("salmon-1.1.0_linux_x86_64")
+			if(chk2 == False):
+				#To get the latest version of salmon, please change the link in the next three lines
+				os.system("wget https://github.com/COMBINE-lab/salmon/releases/download/v1.1.0/salmon-1.1.0_linux_x86_64.tar.gz")
+				os.system("tar -zxvf salmon-1.1.0_linux_x86_64.tar.gz")
+				self.prog_installed.append(path+"/salmon-1.1.0_linux_x86_64")
+			else:
+				print ("The path already contains a folder named salmon-1.1.0_linux_x86_64.tar.gz. please rename it or remove it from the path") 
+				sys.exit()
+
+		if (prog == 3):
+			chk2 = self.checkfolder("ORNA")
+			if(chk2 == False):
+				os.system("git clone https://github.com/SchulzLab/ORNA")
+				self.prog_installed.append(path+"/ORNA")
+			else:
+				print ("The path already contains a folder named ORNA. Please rename it or remove it from the path")
+			
+		if (prog == 4):
+			s,t = commands.getstatusoutput("which cd-hit-est")
+			if(s == 256):
+				uc = raw_input("cd-hit is not found in the environment variables. Do you want to install (y/n) : ")
+				if(uc == "y"):
+					os.system("git clone https://github.com/weizhongli/cdhit")
+					self.install_cdhit(path)
+					os.chdir(path)
+				else:
+					print ("Please remember that cd-hit-est is required for the running of KREATION and must be in the environment variable $PATH")
+			chk2 = self.checkfolder("KREATION")
+			if(chk2 == False):
+				os.system("git clone https://github.com/SchulzLab/KREATION")
+				self.prog_installed.append(path+"/KREATION")
+			else:
+				print ("The path already contains a folder named KREATION. Please rename it or remove it from the path")
+			
+		if (prog == 5):
+			chk1 = self.checkfolder("SEECER.tar.gz")
+			if(chk1 == False):
+				os.system("wget https://zenodo.org/record/3686150/files/SEECER.tar.gz?download=1")
+				os.system("tar -zxvf SEECER.tar.gz")
+				self.prog_installed.append(path+"/SEECER/bin/")
+			else:
+				print ("The path already contains a folder named SEECER.tar.gz. Please rename it or remove it from the path")
+
+	
+		if(prog==8):
 			chk5 = self.checkfolder("velvet")
 			if(chk5 == False):
 				os.system("git clone http://github.com/dzerbino/velvet.git")
 			else:
 				print ("The path already contains a folder named velvet. please rename the folder or remove it from the path")
 				sys.exit()
-		if (prog == 3):
-			output1 = commands.getstatusoutput("uname")		
-			if(output1[1].upper() == "LINUX"):			
-				chk2 = self.checkfolder("ORNA")
-				if(chk2 == False):
-					os.system("git clone https://github.com/SchulzLab/ORNA")
-					self.prog_installed.append(path+"/ORNA")
-				else:
-					print ("The path already contains a folder named ORNA. Please rename it or remove it from the path")
-			else:
-				print("Unknown operating system")
 
-		if (prog == 4):
-			output1 = commands.getstatusoutput("uname")		
-			if(output1[1].upper() == "LINUX"):
-				s,t = commands.getstatusoutput("which cd-hit-est")
-				if(s == 256):
-					uc = raw_input("cd-hit is not found in the environment variables. Do you want to install (y/n) : ")
-					if(uc == "y"):
-						os.system("git clone https://github.com/weizhongli/cdhit")
-						self.install_cdhit(path)
-						os.chdir(path)
-					else:
-						print ("Please remember that cd-hit-est is required for the running of KREATION and must be in the environment variable $PATH")
-				chk2 = self.checkfolder("KREATION")
-				if(chk2 == False):
-					os.system("git clone https://github.com/SchulzLab/KREATION")
-					self.prog_installed.append(path+"/KREATION")
-				else:
-					print ("The path already contains a folder named KREATION. Please rename it or remove it from the path")
-			else:
-				print("Unknown operating system")
 
-	
 	def install_oases(self, path, cs):
 		path2 = path + "/oases"
 		os.chdir(path2)
 		os.system("make "+cs)
 		self.prog_installed.append(path2)
-#		os.system("")
 
 	def install_orna(self, path):
 		path2 = path + "/ORNA"
@@ -174,18 +154,10 @@ class install_script():
 	
 	def checkinstall(self):
 		for i in self.prog_installed:
-			if "SEECER" in i:
-				x1 = os.listdir(i+"/bin/")
-				if(("seecer" in x1) and ("random_sub_N" in x1) and ("run_seecer.sh" in x1) and ("run_jellyfish.sh" in x1) and ("replace_ids" in x1)):
-					print("SEECER installed successfully")
-					#self.export_prog(i)
-				else:
-					print("SEECER was not installed properly. Please try again")				
 			if "oases" in i:
 				x2 = os.listdir(i)
 				if ("oases" in x2):
 					print("oases installed successfully")
-					#self.export_prog(i)
 				else:
 					print("oases was not installed properly. please try again")
 			
@@ -193,19 +165,17 @@ class install_script():
 				x3 = os.listdir(i)
 				if(("velvetg" in x3) and ("velveth" in x3)):
 					print("velvet installed successfully")
-					#self.export_prog(i)
 				else:
 					print("velvet was not installed properly. Please try again")
 					
 			if ("salmon-1.1.0_linux_x86_64.tar.gz" in i):
 				x4 = os.listdir(i+"/bin/")
 				if("salmon" in x4):
-					print("Sailfish installed successfully")
-					#self.export_prog(i)
+					print("Salmon installed successfully")
 				else:
-					print("Sailfish was not installed properly. Please try again")
+					print("Salmon was not installed properly. Please try again")
 
-########### MAIN PROGRAM ###########3
+########### MAIN PROGRAM ###########
 
 x = install_script()
 y1 = x.getoptions()
@@ -228,8 +198,9 @@ print ("1.	OASES")
 print ("2.	SALMON")
 print ("3.	ORNA")
 print ("4.	KREATION")
-print ("5.	ALL")
-print ("6.	QUIT")
+print ("5.	SEECER")
+print ("6.	ALL")
+print ("7.	QUIT")
 
 x1 = raw_input("Enter the option number (if multiple options then separate it by comma): ")
 y = x1.split(",")
@@ -238,16 +209,17 @@ vd = ""
 flg = 0
 cs = ""
 a13 = ""
-if("6" in y):
+if("7" in y):
 	print("Thank you. It was nice working for you")
 	sys.exit()
 
-if "5" in y:
+if "6" in y:
+	#Obtaining and installing oases and velvet
 	vc = raw_input("Execution of Oases requires velvet. Do you want to install velvet (y/n) : ")
 	if(vc == "y"):
 		ch = raw_input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
 		if(ch == "y"):
-			print("Enter the additional compilation settings of velvet seperated by space :")
+			print("Enter the additional compilation settings of velvet seperated by space (for instance - ’MAXKMERLENGTH=57’):")
 			a1 = raw_input()
 			a11 = a1.split()
 			for a2 in a11:
@@ -260,11 +232,19 @@ if "5" in y:
 		vd = raw_input("Enter the location of velvet : ")
 		cs = cs + " \'VELVET_DIR=" + vd +"\'"
 	if (flg == 1):
-		x.obtaining_tar(7, pwd)
+		x.obtaining_tar(8, pwd)
 		x.install_velvet(pwd, cs)	
 	x.obtaining_tar(1, pwd)	
 	x.install_oases(pwd, cs)
-
+	#Obtaining salmon
+	x.obtaining_tar(2, pwd)
+	#Obtaining ORNA
+	x.obtaining_tar(3, pwd)
+	x.install_orna(pwd)
+	#Obtaining KREATION
+	x.obtaining_tar(4, pwd)
+	#Obtaining SEECER
+	x.obtaining_tar(5, pwd)
 else:
 	for i in y:
 		if(int(i) == 1):
@@ -272,7 +252,7 @@ else:
 			if(vc == "y"):
 				ch = raw_input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
 				if(ch == "y"):
-					print("Enter the additional compilation settings of velvet seperated by space :")
+					print("Enter the additional compilation settings of velvet seperated by space (for instance - ’MAXKMERLENGTH=57’):")
 					a1 = raw_input()
 					a11 = a1.split()
 					for a2 in a11:
@@ -290,7 +270,7 @@ else:
 					cs = cs + " \'VELVET_DIR=" + vd +"\'"
 			x.obtaining_tar(1,pwd)
 			if(flg == 1):			
-				x.obtaining_tar(7,pwd)
+				x.obtaining_tar(8,pwd)
 				x.install_velvet(pwd, cs)
 			x.install_oases(pwd, cs)
 		elif(int(i)==3):
