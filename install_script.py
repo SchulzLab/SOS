@@ -286,7 +286,7 @@ else:
 						a13 = a13 + " " + a2 
 					cs = cs + a13
 				flg = 1
-				cs = cs + "\'VELVET_DIR="+pwd+"/velvet\'"
+				cs = cs + " \'VELVET_DIR="+pwd+"/velvet\'"
 			if(vc == "n"):
 				vd = raw_input("Enter the location of velvet : ")
 				if("\\" not in vd):
