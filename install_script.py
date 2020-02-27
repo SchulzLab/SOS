@@ -11,6 +11,7 @@ class install_script():
 
 	def obtaining_tar(self, prog, path):
 		if (prog == 6):
+			os.chdir(path)
 			#Before obtaining tha tar file of the corresponding tool, we always check whether the folder exists in the path. If it exists then we throw an exception otherwise we download the tool
 			#Checking and downloading oases			
 			chk = self.checkfolder("oases")
@@ -32,11 +33,13 @@ class install_script():
 			chk2 = self.checkfolder("salmon-1.1.0_linux_x86_64.tar.gz")
 			if(chk2 == False):
 				#To get the latest version of salmon, please change the link in the next three lines
-				os.system("wget https://github.com/COMBINE-lab/salmon/releases/download/v1.1.0/salmon-1.1.0_linux_x86_64.tar.gz") 
-				os.system("tar -zxvf salmon-1.1.0_linux_x86_64.tar.gz")
+				print("-----salmon installation-------")
+				os.system("wget https://github.com/COMBINE-lab/salmon/releases/download/v1.1.0/salmon-1.1.0_linux_x86_64.tar.gz >"+path+"/LogFiles/salmon.txt 2> "+path+"/LogFiles/salmonError.txt") 
+				os.system("tar -zxvf salmon-1.1.0_linux_x86_64.tar.gz >"+path+"/LogFiles/salmon.txt 2> "+path+"/LogFiles/salmonError.txt")
 				self.prog_installed.append(path+"/salmon-1.1.0_linux_x86_64.tar.gz")
 			else:
-				print ("The path already contains a folder named salmon-1.1.0_linux_x86_64.tar.gz. Please rename it or remove it from the path") 
+				print ("The path already contains a folder named salmon-1.1.0_linux_x86_64.tar.gz. Please rename it or remove it from the path")
+				sys.exit() 
 
 			chk3 = self.checkfolder("ORNA")
 			if(chk3 == False):
@@ -47,71 +50,98 @@ class install_script():
 
 			chk4 = self.checkfolder("KREATION")
 			if(chk4 == False):
-				os.system("git clone https://github.com/SchulzLab/KREATION")
+				print("-----KREATION installation-------")
+				os.system("git clone https://github.com/SchulzLab/KREATION >"+path+"/LogFiles/KREATION.txt 2> "+path+"/LogFiles/KreationError.txt")
 				self.prog_installed.append(path+"/KREATION")
 			else:
 				print ("The path already contains a folder named KREATION. Please rename it or remove it from the path")
 		
 
 		if(prog==1):
+			os.chdir(path)
 			chk6 = self.checkfolder("oases")
 			if(chk6 == False):
-				os.system("git clone http://github.com/dzerbino/oases.git")
+				os.system("git clone http://github.com/dzerbino/oases.git >"+path+"/LogFiles/Oases.txt 2> "+path+"/LogFiles/OasesError.txt")
 			else:
 				print ("The path already contains a folder named oases. please rename the folder or remove it from the path")
 				sys.exit()
 		
 		if(prog==2):
+			os.chdir(path)
 			output = commands.getstatusoutput("uname")		
 			chk2 = self.checkfolder("salmon-1.1.0_linux_x86_64")
 			if(chk2 == False):
-				#To get the latest version of salmon, please change the link in the next three lines
-				os.system("wget https://github.com/COMBINE-lab/salmon/releases/download/v1.1.0/salmon-1.1.0_linux_x86_64.tar.gz")
-				os.system("tar -zxvf salmon-1.1.0_linux_x86_64.tar.gz")
-				self.prog_installed.append(path+"/salmon-1.1.0_linux_x86_64")
+				print("-----salmon installation-------")
+				os.system("wget https://github.com/COMBINE-lab/salmon/releases/download/v1.1.0/salmon-1.1.0_linux_x86_64.tar.gz >"+path+"/LogFiles/salmon.txt 2> "+path+"/LogFiles/salmonError.txt") 
+				os.system("tar -zxvf salmon-1.1.0_linux_x86_64.tar.gz >"+path+"/LogFiles/salmon.txt 2> "+path+"/LogFiles/salmonError.txt")
+				self.prog_installed.append(path+"/salmon-1.1.0_linux_x86_64.tar.gz")
+				chksalmon=self.checkfolder(path+"/salmon-latest_linux_x86_64/bin/salmon")
+				if(chksalmon==False):
+					print("Salmon did not install correctly. Please try again")
+					sys.exit()
+				else:
+					print("Salmon installed successfully")
+			
 			else:
 				print ("The path already contains a folder named salmon-1.1.0_linux_x86_64.tar.gz. please rename it or remove it from the path") 
 				sys.exit()
 
 		if (prog == 3):
+			os.chdir(path)
 			chk2 = self.checkfolder("ORNA")
 			if(chk2 == False):
-				os.system("git clone https://github.com/SchulzLab/ORNA")
+				os.system("git clone https://github.com/SchulzLab/ORNA >"+path+"/LogFiles/ORNA.txt 2> "+path+"/LogFiles/ORNAError.txt")
 				self.prog_installed.append(path+"/ORNA")
 			else:
 				print ("The path already contains a folder named ORNA. Please rename it or remove it from the path")
 			
 		if (prog == 4):
+			os.chdir(path)
 			s,t = commands.getstatusoutput("which cd-hit-est")
 			if(s == 256):
 				uc = raw_input("cd-hit is not found in the environment variables. Do you want to install (y/n) : ")
 				if(uc == "y"):
-					os.system("git clone https://github.com/weizhongli/cdhit")
+					os.system("git clone https://github.com/weizhongli/cdhit >"+path+"/LogFiles/cdhit.txt 2> "+path+"/LogFiles/cdhitError.txt")
 					self.install_cdhit(path)
 					os.chdir(path)
 				else:
 					print ("Please remember that cd-hit-est is required for the running of KREATION and must be in the environment variable $PATH")
 			chk2 = self.checkfolder("KREATION")
 			if(chk2 == False):
-				os.system("git clone https://github.com/SchulzLab/KREATION")
+				print("-----KREATION installation-------")
+				os.system("git clone https://github.com/SchulzLab/KREATION >"+path+"/LogFiles/KREATION.txt 2> "+path+"/LogFiles/KreationError.txt")
 				self.prog_installed.append(path+"/KREATION")
+				chkkreation=self.checkfolder(path+"/KREATION/KREATION.py")
+				if(chkkreation==False):
+					print("KREATION did not install correctly. Please try again")
+					sys.exit()
+				else:
+					print("KREATION installed successfully")
 			else:
 				print ("The path already contains a folder named KREATION. Please rename it or remove it from the path")
 			
 		if (prog == 5):
+			os.chdir(path)
 			chk1 = self.checkfolder("SEECER.tar.gz")
 			if(chk1 == False):
-				os.system("wget https://zenodo.org/record/3686150/files/SEECER.tar.gz?download=1")
-				os.system("tar -zxvf SEECER.tar.gz")
-				self.prog_installed.append(path+"/SEECER/bin/")
+				print("-----SEECER installation-----")
+				os.system("wget https://zenodo.org/record/3686150/files/SEECER.tar.gz > "+path+"/LogFiles/Seecer.txt 2> "+path+"/LogFiles/SeecerError.txt")
+				os.system("tar -zxvf SEECER.tar.gz > "+path+"/LogFiles/Seecer.txt 2> "+path+"/LogFiles/SeecerError.txt")
+				chkkreation=self.checkfolder(path+"/SEECER-0.1.3/SEECER/bin/run_seecer.sh")
+				if(chkkreation==False):
+					print("SEECER did not install correctly. Please try again")
+					sys.exit()
+				else:
+					print("SEECER installed successfully")
 			else:
 				print ("The path already contains a folder named SEECER.tar.gz. Please rename it or remove it from the path")
 
 	
 		if(prog==8):
+			os.chdir(path)
 			chk5 = self.checkfolder("velvet")
 			if(chk5 == False):
-				os.system("git clone http://github.com/dzerbino/velvet.git")
+				os.system("git clone http://github.com/dzerbino/velvet.git >"+path+"/LogFiles/Velvet.txt 2> "+path+"/LogFiles/VelvetError.txt")
 			else:
 				print ("The path already contains a folder named velvet. please rename the folder or remove it from the path")
 				sys.exit()
@@ -120,27 +150,45 @@ class install_script():
 	def install_oases(self, path, cs):
 		path2 = path + "/oases"
 		os.chdir(path2)
-		os.system("make "+cs)
+		os.system("make "+cs+" > "+path+"/LogFiles/Oases.txt 2> "+path+"/LogFiles/OasesError.txt")
 		self.prog_installed.append(path2)
+		chk=self.checkfolder(path+"/oases/oases")
+		if(chk==False):
+			print("Oases did not install correctly. Please try again")
+			sys.exit()
+		else:
+			print("Oases installed successfully")
 
 	def install_orna(self, path):
 		path2 = path + "/ORNA"
 		os.chdir(path2)
-		os.system("bash install.sh")
+		os.system("bash install.sh > "+path+"/LogFiles/ORNA.txt 2> "+path+"/LogFiles/ORNAError.txt")
 		self.prog_installed.append(path2)
+		chk=self.checkfolder(path+"/ORNA/build/bin/ORNA")
+		if(chk==False):
+			print("ORNA did not install correctly. Please try again")
+			sys.exit()
+		else:
+			print("ORNA installed successfully")
 	
 	def install_velvet(self,path, cs):
 		path1 = path + "/velvet"
 		os.chdir(path1) 
 		print("------Velvet installation------")
-		os.system("make "+cs)
+		os.system("make "+cs+" > "+path+"/LogFiles/velvet.txt 2> "+path+"/LogFiles/VelvetError.txt")
 		self.prog_installed.append(path1)
+		chk=self.checkfolder(path+"/velvet/velvetg") and self.checkfolder(path+"/velvet/velveth") 
+		if(chk==False):
+			print("velvet did not install correctly. Please try again")
+			sys.exit()
+		else:
+			print("velvet installed successfully")
 
 	def install_cdhit(self, path):
 		path1 = path + "/cdhit"
 		os.chdir(path1)
 		print("------cd-hit-est installation------")
-		os.system("make")
+		os.system("make > "+path+"/LogFiles/cdhit.txt 2> "+path+"/LogFiles/cdHitError.txt")
 
 	def getoptions(self):
 		parser = OptionParser()
@@ -152,34 +200,10 @@ class install_script():
 		var = os.path.exists(program)
 		return var
 	
-	def checkinstall(self):
-		for i in self.prog_installed:
-			if "oases" in i:
-				x2 = os.listdir(i)
-				if ("oases" in x2):
-					print("oases installed successfully")
-				else:
-					print("oases was not installed properly. please try again")
-			
-			if "velvet" in i:
-				x3 = os.listdir(i)
-				if(("velvetg" in x3) and ("velveth" in x3)):
-					print("velvet installed successfully")
-				else:
-					print("velvet was not installed properly. Please try again")
-					
-			if ("salmon-1.1.0_linux_x86_64.tar.gz" in i):
-				x4 = os.listdir(i+"/bin/")
-				if("salmon" in x4):
-					print("Salmon installed successfully")
-				else:
-					print("Salmon was not installed properly. Please try again")
-
 ########### MAIN PROGRAM ###########
 
 x = install_script()
 y1 = x.getoptions()
-print(y1)
 if(y1.foldername != None):
 	try:
 		os.chdir(y1.foldername)
@@ -192,7 +216,7 @@ if(y1.foldername != None):
 			sys.exit()
 
 pwd = os.getcwd()
-
+os.system("mkdir LogFiles")
 print ("Programs to install :")
 print ("1.	OASES")
 print ("2.	SALMON")
@@ -219,7 +243,7 @@ if "6" in y:
 	if(vc == "y"):
 		ch = raw_input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
 		if(ch == "y"):
-			print("Enter the additional compilation settings of velvet seperated by space (for instance - ’MAXKMERLENGTH=57’):")
+			print("Enter the additional compilation settings of velvet seperated by space (for instance - \'MAXKMERLENGTH=57\'):")
 			a1 = raw_input()
 			a11 = a1.split()
 			for a2 in a11:
@@ -228,13 +252,14 @@ if "6" in y:
 				a13 = a13 + " " + a2 
 			cs = cs + a13
 		flg = 1
+		cs = cs + "\'VELVET_DIR="+pwd+"/velvet\'"
 	if(vc == "n"):
 		vd = raw_input("Enter the location of velvet : ")
 		cs = cs + " \'VELVET_DIR=" + vd +"\'"
+	x.obtaining_tar(1, pwd)		
 	if (flg == 1):
 		x.obtaining_tar(8, pwd)
 		x.install_velvet(pwd, cs)	
-	x.obtaining_tar(1, pwd)	
 	x.install_oases(pwd, cs)
 	#Obtaining salmon
 	x.obtaining_tar(2, pwd)
@@ -252,7 +277,7 @@ else:
 			if(vc == "y"):
 				ch = raw_input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
 				if(ch == "y"):
-					print("Enter the additional compilation settings of velvet seperated by space (for instance - ’MAXKMERLENGTH=57’):")
+					print("Enter the additional compilation settings of velvet seperated by space (for instance - \'MAXKMERLENGTH=57\'):")
 					a1 = raw_input()
 					a11 = a1.split()
 					for a2 in a11:
@@ -278,5 +303,3 @@ else:
 			x.install_orna(pwd)
 		else:
 			x.obtaining_tar(int(i), pwd)
-
-x.checkinstall()
