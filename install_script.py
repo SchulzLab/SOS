@@ -148,6 +148,7 @@ class install_script():
 
 
 	def install_oases(self, path, cs):
+		print("------Oases installation------")
 		path2 = path + "/oases"
 		os.chdir(path2)
 		os.system("make "+cs+" > "+path+"/LogFiles/Oases.txt 2> "+path+"/LogFiles/OasesError.txt")
@@ -160,6 +161,7 @@ class install_script():
 			print("Oases installed successfully")
 
 	def install_orna(self, path):
+		print("------ORNA installation------")
 		path2 = path + "/ORNA"
 		os.chdir(path2)
 		os.system("bash install.sh > "+path+"/LogFiles/ORNA.txt 2> "+path+"/LogFiles/ORNAError.txt")
