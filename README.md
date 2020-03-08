@@ -50,18 +50,16 @@ The downloaded folder should have the following files:
 ### Installation
 
 1.	After downloading the SOS distribution, change into the directory
+```
 		cd SOS	
-2.	Download the SEECER tar file from the provided link and unwrap it into the current folder
-	```
-		tar -zxvf SEECER.tar.gz
-	```
-3.	Optional: Run the python script install_script.py to install the softwares (OASES, KREATION, ORNA and SALMON)
+```
+2.	Optional: Run the python script install_script.py to install the softwares (OASES, KREATION, ORNA and SALMON)
 	```
 		python install_script.py -f <destination_folder>
 	```
-	This should install OASES, ORNA and SALMON and KREATION in the provided destination folder. Additional assembly algorithms should be downloaded and installed seperately.
+	This can install OASES, ORNA, SEECER and SALMON and KREATION in the provided destination folder. Additional assembly algorithms should be downloaded and installed seperately.
 	
-4.	Set the following paths in the environment variable $PATH:
+3.	Set the following paths in the environment variable $PATH:
 	```
 		export PATH=$PATH:path_to_seecer_bin
 		export PATH=$PATH:path_to_orna_bin_folder 
@@ -113,51 +111,53 @@ libtype: library type for the reads given as input to salmon
 
 **General Parameters**
 
-	input: Absolute path of the input read fasta/q file. If the data is paired end, then they should either be interleaved together to form a single file or given as two comma seperated filenames. Multiple single ended files should be combined together to form a single read file. Please avoid using symbols such as ~ in the file path.
 
-	outdir: Absolute path to the output directory. The folder will be created if not present.
 
-	kmer: kmer size to be used for read normalization, transcript assembly and quantification. We suggest a kmer size equivalent to 1/3rd of the read length. 
-
-	normalization: true/false. Indicates whether ORNA should be run on the datasets. We suggest to include normalization step for large datasets(>200M reads) 
+parameter | value | explanation 
+-----------|--------------|---------
+input | /path/to/readfile | Absolute path of the input read fasta/q file. If the data is paired end, then they should either be interleaved together to form a single file or given as two comma separated filenames. Multiple files of singl-end reads should be combined together to form one file. Please avoid using symbols such as ~ in the file path. 
+outdir | /path/to/output | Absolute path to the output directory. The folder will be created if not present.
+kmer | numeric (default 1/3 of read length) | kmer size to be used for read normalization, transcript assembly and quantification. We suggest a kmer size equivalent to 1/3rd of the read length. 
+normalization | true/false | Indicates whether ORNA should be run on the datasets. We suggest to include normalization step for large datasets(>200M reads) 
 
 **Read specific parameters**
 	
-	type: "single" or "paired" 
-
-	interleaved: true/false. This parameter is required if the input data is paired-end. Some assemblers do not accept interleaved paired-end files. Hence, an such files would be seperated into two individual files representing the pairs.
-
-	readlength: Length of the reads. If reads have different sizes then please provided the length of the longest read in the dataset
-
-	ins-length: Insert size for paired end data
+parameter | value | explanation 
+-----------|--------------|---------
+type | single/paired |  Denotes whether single-end or paired-end reads are used.
+interleaved | true/false | This parameter is required if the input data is paired-end. Some assemblers do not accept interleaved paired-end files. Hence, such files will be separated into two individual files representing the pairs.
+readlength | numeric | Length of the reads. If reads have different sizes then the length of the longest read in the dataset needs to be provided.
+ins-length | numeric | Insert size for paired end data.
 
 **seecer specific parameters**
 
-	seecertmp: Temporary folder to store intermediate files generated from SEECER. The folder would be deleted after the completion of the error correction step.
-
-	jellyfish: Absolute path to the jellyfish library. SEECER uses jellyfish to count kmers and build a consensus sequence. 
-
-	binfolder: Absolute path to seecer bin folder
-
-	seecerkmer: kmer size to be used for error correction. 
+parameter | value | explanation 
+-----------|--------------|---------
+seecertmp | foldername | Temporary folder to store intermediate files generated from SEECER. The folder would be deleted after the completion of the error correction step.
+jellyfish | /path/to/jellyfish | Absolute path to the jellyfish library. SEECER uses jellyfish to count kmers and build a consensus sequence. 
+binfolder | /path/to/SEECER | Absolute path to SEECER bin folder.
+seecerkmer | numeric | kmer size to be used for error correction. 
 
 **ORNA parameters**
 
-	ornabase: The base of the log function which is to be used by ORNA for calculating the threshold for each kmer in the dataset. Refer to the manual of ORNA for more details. For optimal results we suggest a value of 1.7
+parameter | value | explanation 
+-----------|--------------|---------
+ornabase | numeric (default 1.7) | The base of the log function, which is used by ORNA for calculating the threshold for each kmer in the dataset. Refer to the manual of ORNA for more details. For good average performance we suggest a value of 1.7.
 
 **KREATION parameters**
 
-	kstep: kmer increment size to be used by KREATION. For instance, if the kstep=2 and the value of kmer=17, then assemblies would be generated for k=17,19,21... till an optimal assembly is reached. For more details refer to KREATION manual.
-
-	kthreshold: d_score threshold to be used by KREATION. For more details, refer to KREATION manual.
-
-	kpname: Name of the assembler to be used. Please note that the name should match the assembler executable file.
-
-	kpadditonal: Additional assembler parameters to be used. This can vary depending upon the assembler used. 
+parameter | value | explanation 
+-----------|--------------|---------
+kstep | numeric | kmer increment size to be used by KREATION. For instance, if the kstep=2 and the value of kmer=17, then assemblies would be generated for k=17,19,21... till an optimal assembly is reached. For more details refer to KREATION manual.
+kthreshold | numeric | d_score threshold be used by KREATION. For more details, refer to KREATION manual.
+kpname | executableName | Name of the assembler to be used. Please note that the name should match the assembler executable file.
+kpadditonal | parameter string | Additional assembler parameters to be used. This can vary depending on the assembler used. 
 
 **salmon parameters**
 
-	libtype: Type of the sequencing library from which the reads originate. For more details, please refer to salmon manual. 
+parameter | value | explanation 
+-----------|--------------|---------
+libtype | salmon libtypes | Type of the sequencing library from which the reads originate. For more details, please refer to salmon manual. 
 
 
 ## Usage
