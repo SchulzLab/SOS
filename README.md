@@ -1,12 +1,14 @@
 ## About
-De novo transcriptome assembly of RNA-Seq data is an important problem. Studies of novel model organisms with a poorly annotated reference sequence can make use of different tools that have been proposed for de-novo transcriptome assembly. While successful, current tools rarely represent integrated solutions that can cope with large and diverse data sets. SOS pipeline is an integrated solution for the transcriptome assembly consisting of read error correction, read filtering, multi-k parameter optimized de-novo transcriptome assembly and transcript level expression estimates. SOS has the following workflow:
-### Error correction: 
-The input reads are first error corrected using SEECER. We use a modified version of seecer which can be downloaded via https://zenodo.org/record/3686150
+De novo transcriptome assembly of RNA-Seq data is an important problem. Studies of novel model organisms with a poorly annotated reference sequence can make use of different tools that have been proposed for de novo transcriptome assembly. While successful, current tools rarely represent integrated solutions that can cope with large and diverse data sets. The SOS pipeline is an integrated solution for the transcriptome assembly consisting of read error correction, read normalization, multi-k parameter optimized de novo transcriptome assembly and transcript level expression estimates. SOS has the following workflow **Integrate Workflow Pic here**:
 
-### Read normalization:
-SOS normalizes the dataset using ORNA which can be downloaded and installed via https://github.com/SchulzLab/ORNA. This step is optional. We advise the users to skip this step if the coverage of the dataset is low, i.e. if there is not a problem with runtime/memory consumption of the assembly process. For datasets> 100 million reads, normalization is recommended.
 
-### Transcriptome assembly:
+1. **Error correction**: 
+The input reads are first error corrected using SEECER. 
+
+2. **Read normalization**:
+SOS normalizes the dataset using ORNA [https://github.com/SchulzLab/ORNA]. 
+
+3. **Transcriptome assembly**:
 The pipeline is flexible and can incorporate any transcriptome assembler by changing a few lines of codes (details given below). We tested SOS on four different assemblers namely:
 
 * TransABySS
@@ -14,10 +16,10 @@ The pipeline is flexible and can incorporate any transcriptome assembler by chan
 * TransLiG
 * Oases 
 
-Note: SOS generates multiple assemblies using multiple kmer sizes and merges them to form a single non-redundant assembly. The lower kmer size is by default set to one-third of the read length and the higher kmer size of the range is decided using the KREATION tool. Hence, if oases is selected for assembly, then the modified version of the assembler (provided with KREATION script) should be used. 
+Note: SOS generates multiple assemblies using multiple kmer sizes and merges them to form a single non-redundant assembly. The lower kmer size is by default set to one-third of the read length and the higher kmer size of the range is decided using the KREATION tool. Hence, if Oases is selected for assembly, then the modified version of the assembler (provided with the KREATION script) should be used. 
 
-### Transcript level expression estimates:
-The pipeline uses salmon for transcript level expression estimation, which can be downloaded and installed via https://github.com/COMBINE-lab/salmon. 
+4. **Transcript level expression estimates**:
+The pipeline uses Salmon for transcript level expression estimation, which can be downloaded and installed via https://github.com/COMBINE-lab/salmon. 
 
 
 ## Running SOS:
@@ -27,10 +29,9 @@ Basic skeleton of SOS requires:
 
 1.	64-bit linux operating system. 
 2.	A physical memory of 12 GB or higher is recommended (more is always better!)
-3.	[Jellyfish](http://www.cbcb.umd.edu/software/jellyfish/) version 2.0  
-4.	GNU Scientific Library (SEECER)
-5.      Any version of [g++](gcc.gnu.org) >= 4.7 (ORNA and Salmon)
-6.	cd-hit-est (required for KREATION)
+3.	GNU Scientific Library (SEECER)
+4.      Any version of [g++](gcc.gnu.org) >= 4.7 (ORNA and Salmon)
+5.	cd-hit-est (required for KREATION)
 
 Note: Requirements may change depending upon the assembler used in the pipeline
 
@@ -57,7 +58,7 @@ The downloaded folder should have the following files:
 	```
 		python install_script.py -f <destination_folder>
 	```
-	This can install OASES, ORNA, SEECER and SALMON and KREATION in the provided destination folder. Additional assembly algorithms should be downloaded and installed seperately.
+	This can install OASES, ORNA, SEECER and SALMON and KREATION in the provided destination folder. Additional assembly algorithms should be downloaded and installed seperately. SOS installs SEECER using a precompiled version that was prepared for the SOS repository specifically (accessible under https://zenodo.org/record/3686150).
 	
 3.	Set the following paths in the environment variable $PATH:
 	```
@@ -90,7 +91,7 @@ inslength: insert-length if the data is paired end (required if the input is pai
 #Seecer Parameters
 seecertmp: tmp folder required for SEECER
 jellyfish: path to jellyfish executable
-binfolder: path to seecer bin folder
+binfolder: path to SEECER bin folder
 seecerkmer: kmer used for error correction
 
 #ORNA parameters
@@ -107,7 +108,7 @@ libtype: library type for the reads given as input to salmon
 
 ```
 
-**Config file parameters**
+### Config file parameters
 
 **General Parameters**
 
@@ -129,7 +130,7 @@ interleaved | true/false | This parameter is required if the input data is paire
 readlength | numeric | Length of the reads. If reads have different sizes then the length of the longest read in the dataset needs to be provided.
 ins-length | numeric | Insert size for paired end data.
 
-**seecer specific parameters**
+**SEECER specific parameters**
 
 parameter | value | explanation 
 -----------|--------------|---------
@@ -167,20 +168,26 @@ The pipeline can be run using the following command from the SOS folder:
 ```
 
 ###### Output Folder
-The output folder will have a folders generated by KREATION runs namely - Assembly, Cluster and Final(containing the final assembly result). Additionally, the output folder would have four more folders namely: 
+The output folder will have a folders generated by KREATION runs namely - *Assembly*, *Cluster* and *Final* (containing the final assembly result). Additionally, the output folder would have four more folders namely: 
 1.	CorrectedReads: This folder contains the error corrected reads (As readname_corrected.fa).
 2.	NormalizedReads: This folder consists of ORNA normalized reads (as Normalized_*.fa). 
 3.	Assembly: The assembly results generated are transferred to this folder (as transcripts.fa)
-4.	Index: This folder is generated by Salmon for sorting index files. 
-5.	Quant: This folder is generated by Salmon and contains the expression estimates from the assembly (in file quant.sf).
+4.	Index: Generated by Salmon for sorting the index files. 
+5.	Quant: Generated by Salmon and contains the expression estimates from the assembly (in file quant.sf).
 
 ##### Contact
 For questions or suggestions regarding SOS please contact
 
 * Dilip A Durai (ddurai_at_contact.mmci.uni-saarland.de)
-* Marcel H Schulz (mschulz_at_mmci.uni-saarland.de)
+* Marcel H Schulz (marcel.schulz_at_em.uni-frankfurt.de)
 
 
 ##### Version
 Version 0.2
 
+
+##### FAQ
+
+1. When should I use read normalization with ORNA?
+
+We advise the users to skip this step if the coverage of the dataset is low, i.e. if there is not a problem with runtime/memory consumption of the assembly process. For datasets> 100 million reads, normalization is recommended.
