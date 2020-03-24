@@ -187,3 +187,12 @@ For questions or suggestions regarding SOS please contact
 1. When should I use read normalization with ORNA?
 
 We advise the users to skip this step if the coverage of the dataset is low, i.e. if there is not a problem with runtime/memory consumption of the assembly process. For datasets> 100 million reads, normalization is recommended.
+
+2. Can I run SOS on multiple input files?
+
+Yes, SOS can be run on multiple input files. If there are multiple input files generated from the same study/experiment, the user have to concatenate the read file to form a single fasta(q) file. 
+
+If the multiple inut files belong to different study/experiment, then the user has to make separate config file for each input read file. The user also has to provide a different output folder for each input file. The pipeline can then be run using the following command:
+```
+snakemake --configfile path_to_the_new_config_file all
+``` 
