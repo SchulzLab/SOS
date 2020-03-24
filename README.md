@@ -1,5 +1,6 @@
 ## About
-De novo transcriptome assembly of RNA-Seq data is an important problem. Studies of novel model organisms with a poorly annotated reference sequence can make use of different tools that have been proposed for de novo transcriptome assembly. While successful, current tools rarely represent integrated solutions that can cope with large and diverse data sets. The SOS pipeline is an integrated solution for the transcriptome assembly consisting of read error correction, read normalization, multi-k parameter optimized de novo transcriptome assembly and transcript level expression estimates. SOS has the following workflow **Integrate Workflow Pic here**:
+De novo transcriptome assembly of RNA-Seq data is an important problem. Studies of novel model organisms with a poorly annotated reference sequence can make use of different tools that have been proposed for de novo transcriptome assembly. While successful, current tools rarely represent integrated solutions that can cope with large and diverse data sets. The SOS pipeline is an integrated solution for the transcriptome assembly consisting of read error correction, read normalization, multi-k parameter optimized de novo transcriptome assembly and transcript level expression estimates. SOS has the following workflow 
+![github-small](https://github.com/SchulzLab/SOS/SOSflowchart.pdf)
 
 
 1. **Error correction**: 
