@@ -3,7 +3,7 @@ import os
 from optparse import OptionParser
 import subprocess
 import sys
-import commands
+#import commands
 
 class install_script():
 	def __init__(self):
@@ -68,7 +68,7 @@ class install_script():
 		
 		if(prog==2):
 			os.chdir(path)
-			output = commands.getstatusoutput("uname")		
+			output = subprocess.check_output("uname")		
 			chk2 = self.checkfolder("salmon-1.1.0_linux_x86_64")
 			if(chk2 == False):
 				print("-----salmon installation-------")
@@ -97,9 +97,9 @@ class install_script():
 			
 		if (prog == 4):
 			os.chdir(path)
-			s,t = commands.getstatusoutput("which cd-hit-est")
+			s,t = subprocess.check_output("which cd-hit-est")
 			if(s == 256):
-				uc = raw_input("cd-hit is not found in the environment variables. Do you want to install (y/n) : ")
+				uc = input("cd-hit is not found in the environment variables. Do you want to install (y/n) : ")
 				if(uc == "y"):
 					os.system("git clone https://github.com/weizhongli/cdhit >"+path+"/LogFiles/cdhit.txt 2> "+path+"/LogFiles/cdhitError.txt")
 					self.install_cdhit(path)
@@ -210,7 +210,7 @@ if(y1.foldername != None):
 	try:
 		os.chdir(y1.foldername)
 	except:
-		uc = raw_input("folder "+ y1.foldername + " does not exists. Do you want to create one (y/n) : ")
+		uc = input("folder "+ y1.foldername + " does not exists. Do you want to create one (y/n) : ")
 		if(uc == "y"):
 			os.system("mkdir " +y1.foldername)
 			os.chdir(y1.foldername)
@@ -228,7 +228,7 @@ print ("5.	SEECER")
 print ("6.	ALL")
 print ("7.	QUIT")
 
-x1 = raw_input("Enter the option number (if multiple options then separate it by comma): ")
+x1 = input("Enter the option number (if multiple options then separate it by comma): ")
 y = x1.split(",")
 acs = ""
 vd = ""
@@ -241,12 +241,12 @@ if("7" in y):
 
 if "6" in y:
 	#Obtaining and installing oases and velvet
-	vc = raw_input("Execution of Oases requires velvet. Do you want to install velvet (y/n) : ")
+	vc = input("Execution of Oases requires velvet. Do you want to install velvet (y/n) : ")
 	if(vc == "y"):
-		ch = raw_input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
+		ch = input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
 		if(ch == "y"):
 			print("Enter the additional compilation settings of velvet seperated by space (for instance - \'MAXKMERLENGTH=57\'):")
-			a1 = raw_input()
+			a1 = input()
 			a11 = a1.split()
 			for a2 in a11:
 				a2 = a2.replace("'","")
@@ -256,7 +256,7 @@ if "6" in y:
 		flg = 1
 		cs = cs + "\'VELVET_DIR="+pwd+"/velvet\'"
 	if(vc == "n"):
-		vd = raw_input("Enter the location of velvet : ")
+		vd = input("Enter the location of velvet : ")
 		cs = cs + " \'VELVET_DIR=" + vd +"\'"
 	x.obtaining_tar(1, pwd)		
 	if (flg == 1):
@@ -275,12 +275,12 @@ if "6" in y:
 else:
 	for i in y:
 		if(int(i) == 1):
-			vc = raw_input("Execution of Oases requires velvet. Do you want to install velvet (y/n) : ")
+			vc = input("Execution of Oases requires velvet. Do you want to install velvet (y/n) : ")
 			if(vc == "y"):
-				ch = raw_input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
+				ch = input("Do you want to include additional compilation settings for velvet (refer to velvet manual for details) y/n : ")
 				if(ch == "y"):
 					print("Enter the additional compilation settings of velvet seperated by space (for instance - \'MAXKMERLENGTH=57\'):")
-					a1 = raw_input()
+					a1 = input()
 					a11 = a1.split()
 					for a2 in a11:
 						a2 = a2.replace("'","")
@@ -290,7 +290,7 @@ else:
 				flg = 1
 				cs = cs + " \'VELVET_DIR="+pwd+"/velvet\'"
 			if(vc == "n"):
-				vd = raw_input("Enter the location of velvet : ")
+				vd = input("Enter the location of velvet : ")
 				if("\\" not in vd):
 					cs = cs + " \'VELVET_DIR=" +pwd+"\\"+ vd +"\'"
 				else:
