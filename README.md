@@ -30,11 +30,9 @@ Basic skeleton of SOS requires:
 
 1.	Python >= version 3.1 
 2.	64-bit linux operating system. 
-2.	A physical memory of 12 GB or higher is recommended (more is always better!)
-3.	GNU Scientific Library (SEECER)
-4.      Any version of [g++](gcc.gnu.org) >= 4.7 (ORNA and Salmon)
-5.	zlib (ORNA)
-6.	cd-hit-est (required for KREATION)
+3.	A physical memory of 12 GB or higher is recommended (more is always better!)
+4.	Any version of [g++](gcc.gnu.org) greater than 4.7 (ORNA and Salmon)
+5.	zlib (for ORNA)
 
 Note: Requirements may change depending upon the assembler used in the pipeline
 
