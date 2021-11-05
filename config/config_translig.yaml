@@ -1,0 +1,28 @@
+General:
+        input: Sample_Data/SRR027877-small-p1.fastq,Sample_Data/SRR027877-small-p2.fastq
+        outdir: Output
+        kmer: 17
+        normalization: true
+
+Reads:
+        type: paired
+        interleaved: false
+        readlength: 50
+        inslength: 200  
+
+ErrorCorrection:
+        seecerkmer: 17
+
+Normalization:
+        ornabase: 1.7
+
+Assembly:
+        kstep: 2
+        kthreshold: 0.01
+        kpname: translig
+        kpadditional:
+
+Quantification:
+        libtype: A
+
+##For more information about the parameters, please refer to the manual/readme files of the individual algorithm

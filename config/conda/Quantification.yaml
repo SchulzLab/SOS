@@ -1,0 +1,5 @@
+channels:
+        - bioconda
+dependencies:
+        - salmon
+        - python=3.6

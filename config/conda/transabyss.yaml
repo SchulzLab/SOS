@@ -1,0 +1,8 @@
+channels:
+        - bioconda
+        - anaconda
+        - conda-forge
+dependencies:
+        - transabyss
+        - cd-hit
+        - python=3.6.0

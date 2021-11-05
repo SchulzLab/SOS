@@ -1,0 +1,6 @@
+channels:
+        - bioconda
+dependencies:
+        - soapdenovo-trans
+        - cd-hit
+        - python=3.6

@@ -1,0 +1,7 @@
+channels:
+        - bioconda
+        - anaconda
+        - conda-forge
+dependencies:
+        - translig
+        - python=3.6
