@@ -3,6 +3,7 @@ import os
 cfile=sys.argv[1]
 ofile=sys.argv[2]
 typ = sys.argv[3]
+
 infile = sys.argv[4]
 
 ins=200
@@ -14,6 +15,7 @@ fl=open(cfile,"r")
 
 flg=0
 for line in fl:
+
 	para=(line.rstrip()).split(":")
 	if(len(para)!=0):
 		if(para[0]=="kmer"):
@@ -38,6 +40,7 @@ for line in fl:
 				krt[para[0]] = ""
 
 files=infile.split(",")
+
 frmt = files[0].split(".")[-1]
 if(frmt.upper()=="FASTA" or frmt.upper()=="FA"):
 	frmt="fa"
@@ -49,6 +52,7 @@ f.write("#Program Name"+"\n")
 f.write(krt["kpname"]+"\n")
 f.write("#Output file name"+"\n")
 if(krt["kpname"]=="oases_pipeline_2.py"):
+
 	f.write("transcripts.fa"+"\n")
 	f.write("#minimum K"+"\n")
 	f.write("-m "+str(kmer)+"\n")
@@ -62,6 +66,7 @@ elif(krt["kpname"]=="transabyss"):
 	f.write("#minimum K"+"\n")
 	f.write("-k "+str(kmer)+"\n")
 	f.write("#Rest of the command"+"\n")
+
 	if(typ.upper()=="PAIRED"):
 		f.write("--pe "+files[0]+" "+files[1]+" --length 100 "+krt["kpadditional"]+"\n")
 	else:

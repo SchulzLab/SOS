@@ -106,6 +106,7 @@ rule createConfigforKREATION:
 		"Creating config file for KREATION"
 	params:
 		"paired" if type=="paired" else "single"
+
 	run:
 		shell("python scripts/configFileGenerator.py {input.cf} {output} {params} {input.inf[0]},{input.inf[1]}")	
 		

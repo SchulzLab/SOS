@@ -1,0 +1,8 @@
+channels:
+        - bioconda
+        - anaconda
+        - conda-forge
+dependencies:
+        - orna
+        - zlib
+        - boost 
