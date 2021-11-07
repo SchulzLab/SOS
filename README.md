@@ -1,6 +1,6 @@
 ## About
 De novo transcriptome assembly of RNA-Seq data is an important problem. Studies of novel model organisms with a poorly annotated reference sequence can make use of different tools that have been proposed for de novo transcriptome assembly. While successful, current tools rarely represent integrated solutions that can cope with large and diverse data sets. The SOS pipeline is an integrated solution for the transcriptome assembly consisting of read error correction, read normalization, multi-k parameter optimized de novo transcriptome assembly and transcript level expression estimates. SOS has the following workflow 
-![SOS flowchart](https://github.com/SchulzLab/SOS/blob/master/SOSflowchart.png)
+![SOS flowchart](https://github.com/SchulzLab/SOS/blob/master/FlowChart.svg)
 
 
 1. **Error correction**: 
@@ -28,11 +28,10 @@ The pipeline uses Salmon for transcript level expression estimation, which can b
 ### Requirements
 Basic skeleton of SOS requires:
 
+1.	Bioconda and Snakemake
 1.	Python >= version 3.1 
 2.	64-bit linux operating system. 
 3.	A physical memory of 12 GB or higher is recommended (more is always better!)
-4.	Any version of [g++](gcc.gnu.org) greater than 4.7 (ORNA and Salmon)
-5.	zlib (for ORNA)
 
 Note: Requirements may change depending upon the assembler used in the pipeline
 
@@ -44,10 +43,12 @@ The pipeline can be downloaded using the following command:
 The downloaded folder should have the following files:
 
 * Snakemake file
-* Sample config file for snakemake
-* install_script.py	
-* A folder consisting of sample data
-* A folder consisting of supporting scripts
+* an initial_setup.sh file: This file downloads and set up the error correction software SEECER from zenodo 
+* Following folders:
+	* Sample_Data: A folder containing sample input files
+	* Config: A folder consisting of config files required by SOS
+	* third_party: A folder consisting of KREATION software used by SOS
+	* src: A folder consisting of supplementary python scripts used throughout the pipeline
 
 ### Installation
 
@@ -55,20 +56,11 @@ The downloaded folder should have the following files:
 ```
 		cd SOS	
 ```
-2.	Optional: Run the python script install_script.py to install the softwares (OASES, KREATION, ORNA and SALMON)
+2.	Run the initial_setup.sh to download and setup SEECER
 	```
-		python install_script.py -f <destination_folder>
+		source initial_setup.sh
 	```
-	This can install OASES, ORNA, SEECER and SALMON and KREATION in the provided destination folder. Additional assembly algorithms should be downloaded and installed seperately. SOS installs SEECER using a precompiled version that was prepared for the SOS repository specifically (accessible under https://zenodo.org/record/3686150).
-	
-3.	Set the following paths in the environment variable $PATH:
-	```
-		export PATH=$PATH:path_to_seecer_bin
-		export PATH=$PATH:path_to_orna_bin_folder 
-		export PATH=$PATH:path_to_assembler_executable
-		export PATH=$PATH:path_to_kreation_folder
-		export PATH=$PATH:path_to_cd-hit_est
-		export PATH=$PATH:path_to_salmon
+	This script downloads a precompiled version of SEECER that was prepared for the SOS repository specifically (accessible under https://zenodo.org/record/3686150). 
 	```
 
 ## Config file
@@ -78,25 +70,23 @@ The config.txt has the following configuration
 ##For more information about the parameters, please refer to the manual/readme files of the individual algorithm
 
 #General Parameters
-input: path to read files. Multiple files should be combined into one file
+input: path to read files. 
 outdir: path to the output directory
-kmer: kmer to be used for normalization, assembly and quantification
+kmer: kmer to be used across the pipeline. 
 normalization: false if you want to skip the normalization step. otherwise true
 
 #Read Specific parameters
 type: paired/single 
-interleaved: true/false (required if the input is paired end)
+interleaved: true/false (required if the input is paired end and interleaved)
 readlength: length of the reads given as input.  
-inslength: insert-length if the data is paired end (required if the input is paired end)
+inslength: insert-length if the data is paired end
 
 #Seecer Parameters
-seecertmp: tmp folder required for SEECER
-jellyfish: path to jellyfish executable
-binfolder: path to SEECER bin folder
-seecerkmer: kmer used for error correction
+seecerkmer: kmer to be used for error correction. 
 
 #ORNA parameters
 ornabase: logarithm base for calculating the kmer abundance threshold in ORNA
+ornakmer: kmer for read normalization. 
 
 #KREATION Parameters
 kstep: step size required for KREATION execution
@@ -106,14 +96,11 @@ kpadditional:
 
 #Salmon Parameters
 libtype: library type for the reads given as input to salmon
-
 ```
 
 ### Config file parameters
 
 **General Parameters**
-
-
 
 parameter | value | explanation 
 -----------|--------------|---------
@@ -135,16 +122,14 @@ ins-length | numeric | Insert size for paired end data.
 
 parameter | value | explanation 
 -----------|--------------|---------
-seecertmp | foldername | Temporary folder to store intermediate files generated from SEECER. The folder would be deleted after the completion of the error correction step.
-jellyfish | /path/to/jellyfish | Absolute path to the jellyfish library. SEECER uses jellyfish to count kmers and build a consensus sequence. 
-binfolder | /path/to/SEECER | Absolute path to SEECER bin folder.
-seecerkmer | numeric | kmer size to be used for error correction. 
+seecerkmer | numeric | kmer size to be used for error correction. If not given, the kmer size mentioned in the General Parameter section would be used
 
 **ORNA parameters**
 
 parameter | value | explanation 
 -----------|--------------|---------
 ornabase | numeric (default 1.7) | The base of the log function, which is used by ORNA for calculating the threshold for each kmer in the dataset. Refer to the manual of ORNA for more details. For good average performance we suggest a value of 1.7.
+ornakmer | numeric  kmer size to be used for read normalization. If not given, the kmer size mentioned in the General Parameters section would be used
 
 **KREATION parameters**
 
@@ -165,7 +150,7 @@ libtype | salmon libtypes | Type of the sequencing library from which the reads 
 ## Usage
 The pipeline can be run using the following command from the SOS folder:
 ```
-	snakemake all
+	snakemake --use-conda all
 ```
 
 ## Output Folder
@@ -194,7 +179,7 @@ Please refer to Kreation manual/manuscript for more details.
 ### Contact
 For questions or suggestions regarding SOS please contact
 
-* Dilip A Durai (ddurai_at_contact.mmci.uni-saarland.de)
+* Dilip A Durai
 * Marcel H Schulz (marcel.schulz_at_em.uni-frankfurt.de)
 
 ## FAQ
