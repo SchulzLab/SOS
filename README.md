@@ -106,7 +106,7 @@ parameter | value | explanation
 -----------|--------------|---------
 input | /path/to/readfile | Absolute path of the input read fasta/q file. If the data is paired end, then they should either be interleaved together to form a single file or given as two comma separated filenames. Multiple files of singl-end reads should be combined together to form one file. Please avoid using symbols such as ~ in the file path. 
 outdir | /path/to/output | Absolute path to the output directory. The folder will be created if not present.
-kmer | numeric (default 1/3 of read length) | kmer size to be used for read normalization, transcript assembly and quantification. We suggest a kmer size equivalent to 1/3rd of the read length. 
+kmer | numeric | kmer size to be used for read normalization, transcript assembly and quantification. We suggest a kmer size equivalent to 1/3rd of the read length. 
 normalization | true/false | Indicates whether ORNA should be run on the datasets. We suggest to include normalization step for large datasets(>200M reads) 
 
 **Read specific parameters**
